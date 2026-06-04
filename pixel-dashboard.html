@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Pixel Dashboard · 像素面板</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --pixel-size: 2px;
+  --bg: #1a1c2c;
+  --bg-light: #2a2d4a;
+  --bg-card: #252842;
+  --text: #e0f7cf;
+  --text-dim: #8b9bb4;
+  --accent: #5bf7b9;
+  --accent2: #f7d55b;
+  --accent3: #f75b8b;
+  --accent4: #5bbdf7;
+  --border: #3a3d5c;
+  --border-light: #4a4d6c;
+  --shadow: 4px 4px 0px #0a0b14;
+  --shadow-sm: 2px 2px 0px #0a0b14;
+  --radius: 0px;
+}
+
+/* ===== Reset & Base ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  line-height: 1.6;
+  /* CRT scanline effect */
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* CRT vignette */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.45) 100%);
+  z-index: 999;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border: 1px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
+
+/* ===== Container ===== */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 12px 24px;
+}
+
+/* ===== Header ===== */
+.header {
+  text-align: center;
+  padding: 16px 8px 12px;
+  position: relative;
+}
+
+.header__avatar {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 12px;
+  image-rendering: pixelated;
+  position: relative;
+}
+
+/* Pixel art character - pure CSS */
+.pixel-character {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: 80px;
+  height: 80px;
+  gap: 0;
+  image-rendering: pixelated;
+  margin: 0 auto;
+  transform: scale(1);
+}
+
+.pixel-character .px {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+.header__title {
+  font-size: clamp(0.7rem, 3.5vw, 0.85rem);
+  color: var(--accent);
+  text-shadow: 2px 2px 0px #0a3a20;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+  line-height: 1.8;
+}
+
+.header__subtitle {
+  font-size: 0.5rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* ===== Status Bar ===== */
+.status-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  font-size: 0.5rem;
+}
+
+.status-bar__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-dim);
+}
+
+.status-bar__dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  animation: blink 2s step-end infinite;
+}
+
+.status-bar__dot--warn {
+  background: var(--accent2);
+  box-shadow: 0 0 6px var(--accent2);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ===== Card ===== */
+.card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent4), var(--accent3), var(--accent2));
+  opacity: 0.7;
+}
+
+.card__header {
+  padding: 14px 16px 10px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6rem;
+  color: var(--accent);
+}
+
+.card__header .icon {
+  font-size: 0.8rem;
+  filter: drop-shadow(1px 1px 0px #000);
+}
+
+.card__body {
+  padding: 14px 16px;
+}
+
+/* ===== Quick Links Grid ===== */
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.quick-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 8px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.45rem;
+  cursor: pointer;
+  transition: all 0.05s step-end;
+  text-align: center;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.quick-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+  border-color: var(--accent);
+}
+
+.quick-link:hover {
+  border-color: var(--accent4);
+}
+
+.quick-link .link-icon {
+  font-size: 1.6rem;
+  filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5));
+  line-height: 1;
+}
+
+.quick-link .link-label {
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+
+.quick-link--accent { border-color: var(--accent); box-shadow: 3px 3px 0px rgba(91,247,185,0.2); }
+.quick-link--accent2 { border-color: var(--accent2); box-shadow: 3px 3px 0px rgba(247,213,91,0.2); }
+.quick-link--accent3 { border-color: var(--accent3); box-shadow: 3px 3px 0px rgba(247,91,139,0.2); }
+.quick-link--accent4 { border-color: var(--accent4); box-shadow: 3px 3px 0px rgba(91,189,247,0.2); }
+
+/* ===== Todo / Checklist ===== */
+.todo-list {
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+  font-size: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.todo-item:last-child { border-bottom: none; }
+
+.todo-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--accent);
+  background: var(--bg);
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+.todo-item.done .todo-checkbox::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: var(--accent);
+  font-family: monospace;
+}
+
+.todo-item.done .todo-label {
+  text-decoration: line-through;
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+.todo-label {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.todo-delete {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--accent3);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.todo-item:hover .todo-delete,
+.todo-item:active .todo-delete { opacity: 1; }
+
+.todo-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.45rem;
+  outline: none;
+}
+
+.todo-input:focus { border-color: var(--accent); }
+
+.btn {
+  padding: 10px 16px;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 0.45rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.05s step-end;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.btn--small {
+  padding: 6px 10px;
+  font-size: 0.4rem;
+}
+
+/* ===== Clock Card ===== */
+.clock-display {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.clock-time {
+  font-size: clamp(1.2rem, 6vw, 1.8rem);
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(91,247,185,0.5);
+  letter-spacing: 4px;
+  line-height: 1.3;
+}
+
+.clock-date {
+  font-size: 0.5rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+/* ===== Progress Bar ===== */
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.45rem;
+}
+
+.stat-label {
+  width: 60px;
+  flex-shrink: 0;
+  color: var(--text-dim);
+}
+
+.stat-bar-wrap {
+  flex: 1;
+  height: 14px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  position: relative;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--accent) 0px, var(--accent) 4px, #3ddb94 4px, #3ddb94 8px);
+  animation: barShift 0.5s infinite linear;
+}
+
+.stat-bar-fill--accent2 { background: repeating-linear-gradient(90deg, var(--accent2) 0px, var(--accent2) 4px, #d4b830 4px, #d4b830 8px); }
+.stat-bar-fill--accent3 { background: repeating-linear-gradient(90deg, var(--accent3) 0px, var(--accent3) 4px, #d43d6a 4px, #d43d6a 8px); }
+.stat-bar-fill--accent4 { background: repeating-linear-gradient(90deg, var(--accent4) 0px, var(--accent4) 4px, #3d8fd4 4px, #3d8fd4 8px); }
+
+@keyframes barShift {
+  to { background-position: 8px 0; }
+}
+
+.stat-value {
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ===== Pixel Decoration ===== */
+.pixel-divider {
+  height: 6px;
+  background: repeating-linear-gradient(90deg,
+    var(--accent) 0px, var(--accent) 6px,
+    transparent 6px, transparent 12px);
+  margin: 14px 0;
+  image-rendering: pixelated;
+}
+
+.pixel-hearts {
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 6px;
+  animation: heartFloat 3s ease-in-out infinite;
+  color: var(--accent3);
+}
+
+@keyframes heartFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ===== Floating pixels (decorative) ===== */
+.floating-pixels {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floating-pixel {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--accent);
+  opacity: 0;
+  animation: floatUp var(--dur) ease-in infinite;
+  animation-delay: var(--delay);
+  left: var(--x);
+  bottom: -10px;
+}
+
+.floating-pixel:nth-child(odd) { background: var(--accent4); }
+.floating-pixel:nth-child(3n) { background: var(--accent2); width: 3px; height: 3px; }
+.floating-pixel:nth-child(4n) { background: var(--accent3); }
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% { transform: translateY(-100vh) scale(0); opacity: 0; }
+}
+
+/* ===== Tab system ===== */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 4px;
+  background: var(--bg);
+  border: none;
+  border-right: 2px solid var(--border);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.4rem;
+  cursor: pointer;
+  transition: all 0.05s step-end;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab-btn:last-child { border-right: none; }
+.tab-btn.active {
+  background: var(--bg-card);
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: -2px;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ===== Media Queries ===== */
+
+/* Tablet & Desktop: 3-column links */
+@media (min-width: 500px) {
+  .quick-links {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .container {
+    padding: 12px 20px 32px;
+  }
+}
+
+@media (min-width: 720px) {
+  .container {
+    padding: 16px 24px 40px;
+  }
+  .quick-links {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .quick-link {
+    padding: 20px 12px;
+    font-size: 0.5rem;
+  }
+  .quick-link .link-icon {
+    font-size: 2rem;
+  }
+}
+
+/* Landscape phone: 4-column */
+@media (max-width: 380px) {
+  .header__title { font-size: 0.6rem; }
+  .quick-links { gap: 6px; }
+  .quick-link { padding: 12px 4px; font-size: 0.38rem; }
+  .quick-link .link-icon { font-size: 1.3rem; }
+  .tab-btn { font-size: 0.35rem; padding: 8px 2px; }
+}
+
+/* Dark mode preference preserved */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #e8ecd8;
+    --bg-light: #d5dac5;
+    --bg-card: #f0f4e4;
+    --text: #2a2d1c;
+    --text-dim: #6a6d5c;
+    --border: #c0c5a8;
+    --border-light: #9a9d8c;
+    --shadow: 4px 4px 0px #8a8d78;
+    --shadow-sm: 2px 2px 0px #8a8d78;
+  }
+}
+
+/* ===== Pixel button animations ===== */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 2px); }
+  80% { transform: translate(1px, -2px); }
+}
+
+.glitch-hover:hover {
+  animation: glitch 0.3s ease-in-out;
+}
+
+/* ===== Pixel art stars (CSS) ===== */
+.pixel-stars {
+  text-align: center;
+  font-size: 0.6rem;
+  letter-spacing: 8px;
+  color: var(--accent2);
+  margin: 8px 0;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+}
+
+/* ===== Footer ===== */
+.footer {
+  text-align: center;
+  padding: 16px 8px;
+  font-size: 0.38rem;
+  color: var(--text-dim);
+}
+
+.footer .pixel-heart {
+  color: var(--accent3);
+  display: inline-block;
+  animation: heartBeat 1.5s step-end infinite;
+}
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(1); }
+  75% { transform: scale(0.8); }
+}
+
+/* ===== Coin / Reward animation ===== */
+.coin-display {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 4px 0;
+  animation: coinSpin 4s step-end infinite;
+  display: inline-block;
+}
+
+@keyframes coinSpin {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating pixel particles -->
+<div class="floating-pixels" aria-hidden="true"></div>
+
+<div class="container">
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header__avatar">
+      <div class="pixel-character" id="pixelChar" aria-label="Pixel art character"></div>
+    </div>
+    <h1 class="header__title">░ PIXEL DASHBOARD ░</h1>
+    <p class="header__subtitle">▸ 像素风格个人面板 ◂</p>
+    <div class="pixel-stars">★ ★ ★ ★ ★</div>
+  </header>
+
+  <!-- ===== STATUS BAR ===== -->
+  <div class="status-bar">
+    <div class="status-bar__item">
+      <span class="status-bar__dot" id="statusDot"></span>
+      <span id="statusText">ONLINE</span>
+    </div>
+    <div class="status-bar__item">
+      <span>🔋</span>
+      <span id="batteryText">--%</span>
+    </div>
+    <div class="status-bar__item">
+      <span>📶</span>
+      <span id="networkText">--</span>
+    </div>
+  </div>
+
+  <!-- ===== CLOCK CARD ===== -->
+  <div class="card">
+    <div class="card__header">
+      <span class="icon">🕹️</span> SYSTEM CLOCK
+    </div>
+    <div class="card__body clock-display">
+      <div class="clock-time" id="clockTime">00:00:00</div>
+      <div class="clock-date" id="clockDate">----.--.--</div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN TABS ===== -->
+  <div class="card">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="links">🔗 快捷</button>
+      <button class="tab-btn" data-tab="todo">📋 待办</button>
+      <button class="tab-btn" data-tab="stats">📊 状态</button>
+    </div>
+
+    <!-- Tab 1: Quick Links -->
+    <div class="tab-panel active" id="panel-links">
+      <div class="card__body">
+        <div class="quick-links" id="quickLinks">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Todo -->
+    <div class="tab-panel" id="panel-todo">
+      <div class="card__body">
+        <ul class="todo-list" id="todoList"></ul>
+        <div class="todo-input-row">
+          <input type="text" class="todo-input" id="todoInput" placeholder="> 添加新任务..." maxlength="60">
+          <button class="btn" id="todoAddBtn">ADD</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Stats -->
+    <div class="tab-panel" id="panel-stats">
+      <div class="card__body">
+        <div class="stat-row">
+          <span class="stat-label">HP</span>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:88%"></div></div>
+          <span class="stat-value">88%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">MP</span>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill stat-bar-fill--accent4" style="width:65%"></div></div>
+          <span class="stat-value">65%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">EXP</span>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill stat-bar-fill--accent2" style="width:42%"></div></div>
+          <span class="stat-value">42%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">⚡</span>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill stat-bar-fill--accent3" style="width:73%"></div></div>
+          <span class="stat-value">73%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PIXEL DIVIDER ===== -->
+  <div class="pixel-divider"></div>
+
+  <!-- ===== TOOLS CARD ===== -->
+  <div class="card">
+    <div class="card__header">
+      <span class="icon">🧰</span> TOOLS · 工具箱
+    </div>
+    <div class="card__body">
+      <div class="quick-links" id="toolLinks">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MOTIVATION / QUOTE ===== -->
+  <div class="card" style="text-align:center;">
+    <div class="card__body">
+      <p style="font-size:0.55rem;line-height:1.8;" id="dailyQuote">LOADING...</p>
+      <div class="pixel-hearts" style="margin-top:8px;">♥ ♥ ♥</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Made with <span class="pixel-heart">♥</span> · Pixel Dashboard v1.0</p>
+    <p style="margin-top:4px;">© 2026 · PRESS START TO CONTINUE</p>
+  </footer>
+
+</div>
+
+<script>
+// ===== FLOATING PIXELS =====
+(function() {
+  const container = document.querySelector('.floating-pixels');
+  const count = 20;
+  for (let i = 0; i < count; i++) {
+    const pixel = document.createElement('div');
+    pixel.classList.add('floating-pixel');
+    pixel.style.setProperty('--x', Math.random() * 100 + '%');
+    pixel.style.setProperty('--dur', (6 + Math.random() * 10) + 's');
+    pixel.style.setProperty('--delay', Math.random() * 8 + 's');
+    container.appendChild(pixel);
+  }
+})();
+
+// ===== PIXEL CHARACTER (CSS Pixel Art) =====
+(function() {
+  // 8x8 pixel art - cute character face
+  const pixels = [
+    // Row 0-7, each 8 columns. 0=transparent, 1=dark, 2=skin, 3=eye, 4=accent
+    [0,0,1,1,1,1,0,0],
+    [0,1,2,2,2,2,1,0],
+    [1,2,2,2,2,2,2,1],
+    [1,2,3,2,2,3,2,1],
+    [1,2,2,2,2,2,2,1],
+    [1,2,2,4,4,2,2,1],
+    [0,1,2,2,2,2,1,0],
+    [0,0,1,1,1,1,0,0],
+  ];
+  const colors = {
+    0: 'transparent',
+    1: '#3a2a1a', // dark outline
+    2: '#f4c892', // skin
+    3: '#1a1c2c', // eye
+    4: '#f75b8b', // blush/accent
+  };
+  const char = document.getElementById('pixelChar');
+  char.style.display = 'grid';
+  char.style.gridTemplateColumns = 'repeat(8, 1fr)';
+  char.style.gridTemplateRows = 'repeat(8, 1fr)';
+  char.style.width = '80px';
+  char.style.height = '80px';
+  char.style.gap = '0';
+
+  pixels.flat().forEach(c => {
+    const div = document.createElement('div');
+    div.style.background = colors[c];
+    div.style.width = '10px';
+    div.style.height = '10px';
+    char.appendChild(div);
+  });
+})();
+
+// ===== CLOCK =====
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clockTime').textContent = `${h}:${m}:${s}`;
+
+  const weekdays = ['日','一','二','三','四','五','六'];
+  const y = now.getFullYear();
+  const mo = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  const wd = weekdays[now.getDay()];
+  document.getElementById('clockDate').textContent = `${y}.${mo}.${d} 星期${wd}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ===== STATUS BAR =====
+function updateStatus() {
+  // Battery
+  if ('getBattery' in navigator) {
+    navigator.getBattery().then(b => {
+      const pct = Math.round(b.level * 100);
+      document.getElementById('batteryText').textContent = pct + '%';
+      const dot = document.getElementById('statusDot');
+      if (b.charging) {
+        dot.classList.add('status-bar__dot--warn');
+      } else if (pct < 20) {
+        dot.classList.add('status-bar__dot--warn');
+      } else {
+        dot.classList.remove('status-bar__dot--warn');
+      }
+    });
+  } else {
+    document.getElementById('batteryText').textContent = '--%';
+  }
+
+  // Network
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (conn) {
+    const types = { cellular: '📶', wifi: '📶', ethernet: '📶', none: '❌' };
+    document.getElementById('networkText').textContent =
+      (types[conn.effectiveType] || conn.effectiveType || '📶').toUpperCase();
+    document.getElementById('statusText').textContent = 'ONLINE';
+  } else {
+    document.getElementById('networkText').textContent = navigator.onLine ? 'OK' : 'OFF';
+    document.getElementById('statusText').textContent = navigator.onLine ? 'ONLINE' : 'OFFLINE';
+  }
+}
+updateStatus();
+setInterval(updateStatus, 30000);
+window.addEventListener('online', updateStatus);
+window.addEventListener('offline', updateStatus);
+
+// ===== QUICK LINKS =====
+const defaultLinks = [
+  { icon: '🔍', label: '搜索', url: 'https://www.google.com', color: 'quick-link--accent' },
+  { icon: '📧', label: '邮件', url: 'https://mail.google.com', color: 'quick-link--accent2' },
+  { icon: '📅', label: '日历', url: 'https://calendar.google.com', color: 'quick-link--accent4' },
+  { icon: '📝', label: '笔记', url: 'https://keep.google.com', color: 'quick-link--accent3' },
+  { icon: '▶️', label: '视频', url: 'https://www.youtube.com', color: 'quick-link--accent2' },
+  { icon: '💬', label: '微信', url: 'weixin://', color: 'quick-link--accent' },
+  { icon: '📷', label: '相机', url: '#camera', color: 'quick-link--accent4' },
+  { icon: '⚙️', label: '设置', url: '#settings', color: 'quick-link--accent3' },
+];
+
+const defaultTools = [
+  { icon: '🧮', label: '计算器', url: '#calculator', color: 'quick-link--accent' },
+  { icon: '🔄', label: '单位换算', url: '#converter', color: 'quick-link--accent4' },
+  { icon: '🎲', label: '随机数', url: '#random', color: 'quick-link--accent2' },
+  { icon: '⏱️', label: '计时器', url: '#timer', color: 'quick-link--accent3' },
+];
+
+function renderLinks(containerId, links, storageKey) {
+  const container = document.getElementById(containerId);
+  const saved = localStorage.getItem(storageKey);
+  const data = saved ? JSON.parse(saved) : links;
+
+  container.innerHTML = data.map((l, i) => `
+    <a href="${l.url}" class="quick-link ${l.color} glitch-hover"
+       target="${l.url.startsWith('http') ? '_blank' : '_self'}"
+       rel="noopener"
+       data-index="${i}">
+      <span class="link-icon">${l.icon}</span>
+      <span class="link-label">${l.label}</span>
+    </a>
+  `).join('');
+}
+
+renderLinks('quickLinks', defaultLinks, 'pixel_links');
+renderLinks('toolLinks', defaultTools, 'pixel_tools');
+
+// ===== TODO LIST =====
+const STORAGE_KEY = 'pixel_todos';
+
+function loadTodos() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  return saved ? JSON.parse(saved) : [
+    { id: 1, text: '完成今日工作 ✅', done: true },
+    { id: 2, text: '喝水 8 杯 💧', done: false },
+    { id: 3, text: '运动 30 分钟 🏃', done: false },
+  ];
+}
+
+function saveTodos(todos) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+}
+
+let nextId = (function() {
+  const todos = loadTodos();
+  return todos.length ? Math.max(...todos.map(t => t.id)) + 1 : 1;
+})();
+
+function renderTodos() {
+  const todos = loadTodos();
+  const list = document.getElementById('todoList');
+  list.innerHTML = todos.map(t => `
+    <li class="todo-item ${t.done ? 'done' : ''}" data-id="${t.id}">
+      <div class="todo-checkbox"></div>
+      <span class="todo-label">${escapeHtml(t.text)}</span>
+      <button class="todo-delete" data-id="${t.id}" aria-label="删除">✕</button>
+    </li>
+  `).join('');
+
+  // Click handlers
+  list.querySelectorAll('.todo-item').forEach(item => {
+    const checkbox = item.querySelector('.todo-checkbox');
+    const delBtn = item.querySelector('.todo-delete');
+
+    checkbox.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleTodo(parseInt(item.dataset.id));
+    });
+
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteTodo(parseInt(item.dataset.id));
+    });
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function addTodo(text) {
+  if (!text.trim()) return;
+  const todos = loadTodos();
+  todos.push({ id: nextId++, text: text.trim(), done: false });
+  saveTodos(todos);
+  renderTodos();
+}
+
+function toggleTodo(id) {
+  const todos = loadTodos();
+  const todo = todos.find(t => t.id === id);
+  if (todo) { todo.done = !todo.done; saveTodos(todos); renderTodos(); }
+}
+
+function deleteTodo(id) {
+  let todos = loadTodos();
+  todos = todos.filter(t => t.id !== id);
+  saveTodos(todos);
+  renderTodos();
+}
+
+document.getElementById('todoAddBtn').addEventListener('click', () => {
+  const input = document.getElementById('todoInput');
+  addTodo(input.value);
+  input.value = '';
+  input.focus();
+});
+
+document.getElementById('todoInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    addTodo(e.target.value);
+    e.target.value = '';
+  }
+});
+
+renderTodos();
+
+// ===== TABS =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabName = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + tabName).classList.add('active');
+  });
+});
+
+// ===== DAILY QUOTE =====
+const quotes = [
+  '「 每一次努力，都是幸运的伏笔 」',
+  '「 游戏尚未结束，继续前进吧 」',
+  '「 LEVEL UP! 今天要比昨天更强 」',
+  '「 像素虽小，拼在一起就是世界 」',
+  '「 PRESS START — 新的冒险开始了 」',
+  '「 不要害怕失败，那是经验值 」',
+  '「 保持满血状态，迎接每一天 」',
+  '「 你是自己人生的主角 NPC 」',
+  '「 SAVE POINT — 休息一下再出发 」',
+  '「 即使只有 8-bit，也要活出色彩 」',
+];
+const today = new Date();
+const quoteIndex = (today.getDate() + today.getMonth() * 31) % quotes.length;
+document.getElementById('dailyQuote').textContent = quotes[quoteIndex];
+
+// ===== SERVICE WORKER REGISTRATION (PWA) =====
+if ('serviceWorker' in navigator) {
+  // Minimal service worker for offline caching
+  // Uncomment below and add a sw.js for full PWA support
+  // navigator.serviceWorker.register('/sw.js');
+}
+
+console.log('%c🎮 Pixel Dashboard Ready %cPRESS START!',
+  'font-size:16px;color:#5bf7b9;', 'color:#f7d55b;');
+console.log('%cMade with pixel love ♥', 'color:#f75b8b;');
+</script>
+
+</body>
+</html>
