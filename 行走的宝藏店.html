@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="pixel">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>行走的宝藏店</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+<!-- ===== SECTION 1: CSS RESET ===== -->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{min-height:100dvh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+ul,ol{list-style:none}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit}
+img{max-width:100%;display:block}
+</style>
+
+<!-- ===== SECTION 2: THEME CUSTOM PROPERTIES ===== -->
+<style>
+/* PIXEL (default) */
+:root,[data-theme="pixel"]{
+--font-display:'Press Start 2P',monospace;
+--font-body:'VT323',monospace;
+--fs-xs:0.45rem;--fs-sm:0.55rem;--fs-md:0.7rem;--fs-lg:0.9rem;--fs-xl:1.2rem;
+--color-bg:#1a1a2e;--color-surface:#16213e;--color-surface2:#1f3056;
+--color-primary:#e94560;--color-primary2:#ff6b81;
+--color-secondary:#0f3460;--color-accent:#f5c518;--color-accent2:#ffe066;
+--color-success:#2ecc71;--color-danger:#e74c3c;--color-info:#3498db;
+--color-text:#eaeaea;--color-text-dim:#8888aa;--color-text-inv:#1a1a2e;
+--border-w:3px;--border-color:#ffffff;--border-style:solid;
+--shadow:4px 4px 0 #000;--shadow-sm:2px 2px 0 #000;
+--radius:0px;--transition:0.05s step-end;
+--scanline:rgba(0,0,0,0.03);
+}
+/* MINIMAL */
+[data-theme="minimal"]{
+--font-display:system-ui,-apple-system,sans-serif;--font-body:system-ui,-apple-system,sans-serif;
+--fs-xs:0.75rem;--fs-sm:0.85rem;--fs-md:0.95rem;--fs-lg:1.1rem;--fs-xl:1.3rem;
+--color-bg:#f5f5f5;--color-surface:#fff;--color-surface2:#f0f0f0;
+--color-primary:#333;--color-primary2:#555;
+--color-secondary:#e0e0e0;--color-accent:#0066cc;--color-accent2:#3399ff;
+--color-success:#2e7d32;--color-danger:#c62828;--color-info:#1565c0;
+--color-text:#222;--color-text-dim:#888;--color-text-inv:#fff;
+--border-w:1px;--border-color:#ddd;--border-style:solid;
+--shadow:0 2px 8px rgba(0,0,0,0.08);--shadow-sm:0 1px 4px rgba(0,0,0,0.06);
+--radius:12px;--transition:0.2s ease;
+--scanline:transparent;
+}
+/* DARK */
+[data-theme="dark"]{
+--font-display:'JetBrains Mono','Fira Code',monospace;--font-body:'JetBrains Mono','Fira Code',monospace;
+--fs-xs:0.65rem;--fs-sm:0.75rem;--fs-md:0.85rem;--fs-lg:1rem;--fs-xl:1.2rem;
+--color-bg:#0d1117;--color-surface:#161b22;--color-surface2:#1c2333;
+--color-primary:#58a6ff;--color-primary2:#79b8ff;
+--color-secondary:#30363d;--color-accent:#d2a8ff;--color-accent2:#e8d0ff;
+--color-success:#3fb950;--color-danger:#f85149;--color-info:#58a6ff;
+--color-text:#c9d1d9;--color-text-dim:#8b949e;--color-text-inv:#0d1117;
+--border-w:1px;--border-color:#30363d;--border-style:solid;
+--shadow:0 4px 12px rgba(0,0,0,0.4);--shadow-sm:0 2px 6px rgba(0,0,0,0.3);
+--radius:8px;--transition:0.15s ease;
+--scanline:rgba(255,255,255,0.02);
+}
+[data-theme="pixel"] body{background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scanline) 2px,var(--scanline) 4px)}
+</style>
+
+<!-- ===== SECTION 3: BASE & LAYOUT ===== -->
+<style>
+body{
+font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);
+font-size:var(--fs-md);line-height:1.5;
+}
+#app{max-width:800px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+#view-container{flex:1;padding:12px 12px 100px;overflow-y:auto}
+</style>
+
+<!-- ===== SECTION 4: TAB BAR ===== -->
+<style>
+#tab-bar{
+position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:800px;
+display:flex;background:var(--color-surface);border-top:var(--border-w) var(--border-style) var(--border-color);
+z-index:900;padding:4px 0 env(safe-area-inset-bottom,4px);
+}
+.tab-btn{
+flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+padding:6px 2px;gap:2px;color:var(--color-text-dim);font-family:var(--font-display);
+font-size:var(--fs-xs);transition:var(--transition);cursor:pointer;
+}
+.tab-btn.active{color:var(--color-primary)}
+.tab-btn .tab-ico{font-size:1.3rem;line-height:1}
+[data-theme="pixel"] .tab-btn:active{transform:translateY(2px)}
+</style>
+
+<!-- ===== SECTION 5: COMPONENT STYLES ===== -->
+<style>
+/* Card */
+.card{
+background:var(--color-surface);border:var(--border-w) var(--border-style) var(--border-color);
+box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden
+}
+.card__hd{padding:10px 14px;border-bottom:1px solid var(--border-color);font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-primary);display:flex;align-items:center;gap:8px}
+.card__bd{padding:12px 14px}
+
+/* StoreCard */
+.store-card{
+background:var(--color-surface);border:var(--border-w) var(--border-style) var(--border-color);
+box-shadow:var(--shadow-sm);cursor:pointer;overflow:hidden;display:block;
+transition:var(--transition);margin-bottom:12px;break-inside:avoid;
+}
+[data-theme="pixel"] .store-card:active{transform:translate(2px,2px);box-shadow:none}
+.store-card__img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--color-surface2);image-rendering:pixelated}
+.store-card__img--placeholder{display:flex;align-items:center;justify-content:center;font-size:3rem}
+.store-card__info{padding:10px 12px}
+.store-card__name{font-family:var(--font-display);font-size:var(--fs-sm);color:var(--color-text);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.store-card__tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.store-card__meta{display:flex;justify-content:space-between;align-items:center;font-size:var(--fs-xs);color:var(--color-text-dim)}
+
+/* StarRating */
+.star-rating{display:inline-flex;gap:2px;font-size:1rem;line-height:1}
+.star-rating--sm{font-size:0.7rem}
+.star-rating--lg{font-size:1.3rem}
+.star{cursor:default;transition:var(--transition)}
+.star--filled{color:var(--color-accent);text-shadow:0 0 6px var(--color-accent)}
+.star--empty{color:var(--color-text-dim)}
+.star--interactive{cursor:pointer}
+[data-theme="pixel"] .star--interactive:active{transform:scale(1.3)}
+
+/* TagChip */
+.tag-chip{
+display:inline-block;padding:3px 8px;font-family:var(--font-display);font-size:var(--fs-xs);
+border:2px solid var(--color-primary);color:var(--color-primary);background:transparent;
+cursor:pointer;white-space:nowrap;transition:var(--transition)
+}
+.tag-chip.active{background:var(--color-primary);color:var(--color-text-inv)}
+.tag-chip--accent{border-color:var(--color-accent);color:var(--color-accent)}
+.tag-chip--accent.active{background:var(--color-accent);color:var(--color-text-inv)}
+.tag-chip--success{border-color:var(--color-success);color:var(--color-success)}
+.tag-chip--success.active{background:var(--color-success);color:var(--color-text-inv)}
+.tag-chip--danger{border-color:var(--color-danger);color:var(--color-danger)}
+.tag-chip--danger.active{background:var(--color-danger);color:var(--color-text-inv)}
+.tag-chip--info{border-color:var(--color-info);color:var(--color-info)}
+.tag-chip--info.active{background:var(--color-info);color:var(--color-text-inv)}
+
+/* PixelButton */
+.pxl-btn{
+display:inline-flex;align-items:center;justify-content:center;gap:6px;
+padding:10px 18px;font-family:var(--font-display);font-size:var(--fs-xs);
+border:var(--border-w) var(--border-style) var(--border-color);box-shadow:var(--shadow-sm);
+background:var(--color-surface);color:var(--color-text);cursor:pointer;
+transition:var(--transition);white-space:nowrap;user-select:none
+}
+[data-theme="pixel"] .pxl-btn:active{transform:translate(2px,2px);box-shadow:none}
+.pxl-btn--primary{background:var(--color-primary);color:var(--color-text-inv);border-color:var(--color-primary)}
+.pxl-btn--accent{background:var(--color-accent);color:var(--color-text-inv);border-color:var(--color-accent)}
+.pxl-btn--danger{background:var(--color-danger);color:#fff;border-color:var(--color-danger)}
+.pxl-btn--sm{padding:6px 12px;font-size:0.35rem}
+.pxl-btn--lg{padding:14px 24px;font-size:var(--fs-sm)}
+.pxl-btn--block{display:flex;width:100%}
+
+/* PixelInput */
+.pxl-input-group{margin-bottom:12px}
+.pxl-input-label{display:block;font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-text-dim);margin-bottom:6px}
+.pxl-input,.pxl-select,.pxl-textarea{
+width:100%;padding:10px 12px;background:var(--color-bg);color:var(--color-text);
+border:var(--border-w) var(--border-style) var(--border-color);
+font-family:var(--font-body);font-size:var(--fs-sm);outline:none;transition:var(--transition)
+}
+.pxl-input:focus,.pxl-select:focus,.pxl-textarea:focus{border-color:var(--color-accent)}
+.pxl-textarea{resize:vertical;min-height:80px}
+.pxl-select{appearance:none;-webkit-appearance:none}
+
+/* StatBar */
+.stat-bar{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:var(--fs-xs)}
+.stat-bar__label{width:50px;flex-shrink:0;color:var(--color-text-dim);font-family:var(--font-display)}
+.stat-bar__track{flex:1;height:12px;background:var(--color-bg);border:2px solid var(--border-color);position:relative}
+.stat-bar__fill{height:100%;background:repeating-linear-gradient(90deg,var(--color-accent) 0,var(--color-accent) 4px,var(--color-accent2) 4px,var(--color-accent2) 8px)}
+.stat-bar__fill--primary{background:repeating-linear-gradient(90deg,var(--color-primary) 0,var(--color-primary) 4px,var(--color-primary2) 4px,var(--color-primary2) 8px)}
+.stat-bar__fill--success{background:repeating-linear-gradient(90deg,var(--color-success) 0,var(--color-success) 4px,#5fe68a 4px,#5fe68a 8px)}
+.stat-bar__fill--info{background:repeating-linear-gradient(90deg,var(--color-info) 0,var(--color-info) 4px,#5baeff 4px,#5baeff 8px)}
+.stat-bar__val{width:36px;text-align:right;flex-shrink:0;font-family:var(--font-display);font-size:var(--fs-xs)}
+
+/* EmptyState */
+.empty-state{text-align:center;padding:40px 20px}
+.empty-state__icon{font-size:3rem;margin-bottom:12px}
+.empty-state__title{font-family:var(--font-display);font-size:var(--fs-sm);color:var(--color-text);margin-bottom:6px}
+.empty-state__desc{font-size:var(--fs-xs);color:var(--color-text-dim);margin-bottom:16px}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--color-surface);border:var(--border-w) var(--border-style) var(--border-color);box-shadow:var(--shadow);max-width:400px;width:100%;max-height:80vh;overflow-y:auto}
+.modal__hd{padding:12px 14px;border-bottom:1px solid var(--border-color);font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-primary);display:flex;justify-content:space-between;align-items:center}
+.modal__close{font-size:1.2rem;cursor:pointer;color:var(--color-text-dim)}
+.modal__bd{padding:14px}
+.modal__ft{padding:10px 14px;border-top:1px solid var(--border-color);display:flex;gap:8px;justify-content:flex-end}
+
+/* Toast */
+#toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{padding:10px 18px;font-family:var(--font-display);font-size:var(--fs-xs);border:2px solid;box-shadow:var(--shadow-sm);animation:toastIn 0.3s steps(4) forwards;pointer-events:auto}
+.toast--success{background:var(--color-success);color:#fff;border-color:#1e9e4a}
+.toast--error{background:var(--color-danger);color:#fff;border-color:#c0392b}
+.toast--info{background:var(--color-info);color:#fff;border-color:#1e7abc}
+@keyframes toastIn{0%{opacity:0;transform:translateY(-20px)}100%{opacity:1;transform:translateY(0)}}
+
+/* Back button */
+.back-bar{padding:8px 0;margin-bottom:8px}
+.back-btn{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-text-dim);cursor:pointer}
+
+/* Section title */
+.section-title{font-family:var(--font-display);font-size:var(--fs-sm);color:var(--color-primary);margin:16px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--border-color)}
+
+/* FAB */
+.fab{position:fixed;bottom:100px;right:20px;width:56px;height:56px;border-radius:var(--radius);background:var(--color-primary);color:var(--color-text-inv);border:var(--border-w) var(--border-style) var(--border-color);box-shadow:var(--shadow);font-size:1.5rem;display:flex;align-items:center;justify-content:center;z-index:800;cursor:pointer;font-family:var(--font-display);transition:var(--transition)}
+[data-theme="pixel"] .fab:active{transform:translate(2px,2px);box-shadow:none}
+
+/* Chips scroll */
+.chips-row{display:flex;gap:6px;overflow-x:auto;padding:8px 0;margin-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chips-row::-webkit-scrollbar{display:none}
+
+/* Waterfall */
+.waterfall{display:flex;gap:10px;align-items:flex-start}
+.waterfall__col{flex:1;min-width:0}
+@media(max-width:380px){.waterfall{flex-direction:column}}
+
+/* Photo grid */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(min-width:600px){.photo-grid{grid-template-columns:repeat(4,1fr)}}
+.photo-grid__item{aspect-ratio:1;object-fit:cover;background:var(--color-surface2);border:2px solid var(--border-color);cursor:pointer;image-rendering:pixelated}
+
+/* Lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:1500;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.lightbox img{max-width:95vw;max-height:90vh;object-fit:contain;image-rendering:pixelated}
+
+/* Visit timeline */
+.timeline-item{padding:10px 0;border-bottom:1px dashed var(--border-color)}
+.timeline-item:last-child{border-bottom:none}
+.timeline-item__date{font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-accent)}
+.timeline-item__summary{font-size:var(--fs-sm);margin-top:4px}
+.timeline-item__cost{color:var(--color-primary);font-family:var(--font-display);font-size:var(--fs-xs)}
+
+/* Stats */
+.stats-big-num{font-family:var(--font-display);font-size:var(--fs-xl);color:var(--color-accent);text-align:center;padding:8px 0}
+.stats-bar-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:8px 0}
+.stats-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.stats-bar-col__bar{width:100%;background:var(--color-primary);border:2px solid var(--border-color);transition:var(--transition);min-height:2px}
+.stats-bar-col__label{font-size:var(--fs-xs);color:var(--color-text-dim);font-family:var(--font-display)}
+
+/* Search */
+.search-highlight{background:var(--color-accent);color:var(--color-text-inv);padding:0 2px}
+
+/* Preview image */
+.preview-img{width:100%;max-width:300px;aspect-ratio:4/3;object-fit:cover;border:2px solid var(--border-color);margin:8px 0;image-rendering:pixelated;background:var(--color-surface2)}
+.preview-imgs{display:flex;flex-wrap:wrap;gap:8px}
+.preview-imgs .preview-img{width:80px;height:80px;aspect-ratio:auto}
+
+/* Pixel divider */
+.pxl-divider{height:4px;margin:14px 0;background:repeating-linear-gradient(90deg,var(--color-primary) 0,var(--color-primary) 6px,transparent 6px,transparent 12px)}
+
+/* Share card preview */
+.share-preview{text-align:center}
+.share-preview canvas{max-width:100%;border:var(--border-w) var(--border-style) var(--border-color);box-shadow:var(--shadow)}
+
+/* Settings */
+.settings-section{margin-bottom:20px}
+.settings-section h3{font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-primary);margin-bottom:10px}
+
+/* File input hidden */
+.file-input-hidden{display:none}
+
+/* Image picker area */
+.img-picker-area{border:2px dashed var(--border-color);padding:20px;text-align:center;cursor:pointer;font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-text-dim);margin:8px 0;transition:var(--transition)}
+.img-picker-area:hover{border-color:var(--color-accent);color:var(--color-accent)}
+
+/* Dish card in list */
+.dish-row{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border-color)}
+.dish-row:last-child{border-bottom:none}
+.dish-row__thumb{width:50px;height:50px;object-fit:cover;border:2px solid var(--border-color);background:var(--color-surface2);flex-shrink:0;image-rendering:pixelated}
+.dish-row__info{flex:1;min-width:0}
+.dish-row__name{font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dish-row__meta{font-size:var(--fs-xs);color:var(--color-text-dim);display:flex;gap:8px;align-items:center}
+.dish-row__actions{display:flex;gap:4px;flex-shrink:0}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.filter-bar select{flex:1;min-width:0}
+
+/* Wishlist item */
+.wishlist-item{padding:10px 12px;border:2px solid var(--border-color);margin-bottom:8px;background:var(--color-surface)}
+.wishlist-item__name{font-family:var(--font-display);font-size:var(--fs-sm);color:var(--color-accent)}
+.wishlist-item__addr{font-size:var(--fs-xs);color:var(--color-text-dim);margin-top:4px}
+.wishlist-item__reason{font-size:var(--fs-xs);color:var(--color-text-dim);font-style:italic;margin-top:2px}
+.wishlist-item__source{display:inline-block;margin-top:4px;padding:2px 6px;font-size:var(--fs-xs);border:1px solid var(--color-info);color:var(--color-info);font-family:var(--font-display)}
+.wishlist-item__actions{display:flex;gap:6px;margin-top:8px}
+
+/* Responsive */
+@media(max-width:380px){
+#view-container{padding:8px 8px 90px}
+.fab{width:48px;height:48px;bottom:90px;right:12px;font-size:1.3rem}
+}
+@media(min-width:600px){
+.waterfall{max-width:100%}
+}
+[data-theme="pixel"] ::selection{background:var(--color-accent);color:var(--color-text-inv)}
+</style>
+</head>
+<body>
+
+<!-- ===== SECTION 6: HTML STRUCTURE ===== -->
+<div id="app">
+  <main id="view-container"></main>
+</div>
+
+<nav id="tab-bar">
+  <button class="tab-btn active" data-route="index"><span class="tab-ico">🏠</span><span>首页</span></button>
+  <button class="tab-btn" data-route="wishlist"><span class="tab-ico">💝</span><span>心愿单</span></button>
+  <button class="tab-btn" data-route="photo-wall"><span class="tab-ico">📷</span><span>图片墙</span></button>
+  <button class="tab-btn" data-route="statistics"><span class="tab-ico">📊</span><span>统计</span></button>
+  <button class="tab-btn" data-route="settings"><span class="tab-ico">⚙️</span><span>设置</span></button>
+</nav>
+
+<button class="fab" id="fab-btn" title="添加宝藏店">＋</button>
+
+<div id="toast-container"></div>
+<div id="modal-container"></div>
+<div id="lightbox-container"></div>
+
+<input type="file" class="file-input-hidden" id="photoInput" accept="image/*" multiple>
+<input type="file" class="file-input-hidden" id="importInput" accept=".json">
+
+<!-- ===== SECTION 7: JAVASCRIPT ===== -->
+<script>
+// ========== CONFIG & CONSTANTS ==========
+const CUISINES = ['川菜','湘菜','粤菜','闽菜','苏菜','浙菜','徽菜','鲁菜','日料','韩餐','西餐','火锅','烧烤','小吃','甜品','饮品','其他'];
+const TAGS = ['网红店','老字号','苍蝇馆子','约会餐厅','深夜食堂','工作日午餐','周末Brunch','适合聚餐','一人食','拍照好看'];
+const DISH_CATEGORIES = ['招牌必点','凉菜/前菜','热菜/主菜','主食/面点','甜品/点心','饮品/酒水','汤品/锅物','其他'];
+const DISH_TAGS = ['推荐','必点','一般','踩雷'];
+const WISHLIST_SOURCES = ['朋友推荐','小红书','抖音','大众点评','路过看到','公众号推荐','其他'];
+
+const STORAGE_KEYS = {stores:'t_stores',dishes:'t_dishes',visits:'t_visits',wishlist:'t_wishlist',settings:'t_settings'};
+const DEFAULT_STORE_IMG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" fill="%2316213e"><rect width="400" height="300"/><text x="200" y="150" text-anchor="middle" dy=".3em" font-size="48" fill="%23eaeaea">🏪</text></svg>');
+
+// ========== UTILITY HELPERS ==========
+function genId(){return 't'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
+function fmt(n){return Number(n).toFixed(0)}
+function esc(str){const d=document.createElement('div');d.textContent=str;return d.innerHTML}
+function today(){return new Date().toISOString().split('T')[0]}
+function nowISO(){return new Date().toISOString()}
+function getAvg(arr,key){if(!arr||!arr.length)return 0;return arr.reduce((s,x)=>s+(Number(x[key])||0),0)/arr.length}
+
+// ========== localStorage ENGINE ==========
+const DB = {
+  load(k){try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]}},
+  save(k,v){localStorage.setItem(k,JSON.stringify(v))},
+  getAll(coll){return this.load(STORAGE_KEYS[coll])},
+  getById(coll,id){return this.getAll(coll).find(x=>x._id===id)},
+  add(coll,item){item._id=genId();item.createTime=nowISO();item.updateTime=nowISO();const d=this.getAll(coll);d.push(item);this.save(STORAGE_KEYS[coll],d);return item},
+  update(coll,id,patch){const d=this.getAll(coll);const i=d.findIndex(x=>x._id===id);if(i<0)return null;patch.updateTime=nowISO();d[i]={...d[i],...patch};this.save(STORAGE_KEYS[coll],d);return d[i]},
+  remove(coll,id){let d=this.getAll(coll);const item=d.find(x=>x._id===id);d=d.filter(x=>x._id!==id);this.save(STORAGE_KEYS[coll],d);return item},
+  getSettings(){try{return JSON.parse(localStorage.getItem(STORAGE_KEYS.settings))||{theme:'pixel'}}catch{return{theme:'pixel'}}},
+  saveSettings(s){localStorage.setItem(STORAGE_KEYS.settings,JSON.stringify(s))},
+  storageBytes(){return new Blob([JSON.stringify(localStorage)]).size},
+  storagePercent(){return(this.storageBytes()/(5*1024*1024))*100}
+};
+
+// Cascade delete: remove store → also remove its dishes & visits
+function deleteStoreCascade(storeId){
+  const dishes=DB.getAll('dishes').filter(d=>d.storeId===storeId);
+  const visits=DB.getAll('visits').filter(v=>v.storeId===storeId);
+  dishes.forEach(d=>DB.remove('dishes',d._id));
+  visits.forEach(v=>DB.remove('visits',v._id));
+  DB.remove('stores',storeId);
+  return{dishes:dishes.length,visits:visits.length};
+}
+
+// ========== SEED DATA ==========
+function seedData(){
+  if(DB.getAll('stores').length>0)return;
+  const s1=DB.add('stores',{name:'老张火锅',address:'成都市锦江区红星路三段99号',location:{lat:30.6598,lng:104.0636},tags:['火锅','老字号','深夜食堂'],cuisine:'火锅',avgPrice:85,rating:{taste:4.5,environment:3.5,service:4,value:4},coverImage:'',status:'visited',visitCount:3,notes:'锅底很香，毛肚是招牌！'});
+  const s2=DB.add('stores',{name:'一风堂拉面',address:'上海市静安区南京西路1618号',location:{lat:31.2304,lng:121.4548},tags:['日料','工作日午餐','一人食'],cuisine:'日料',avgPrice:58,rating:{taste:4,environment:4,service:4.5,value:3.5},coverImage:'',status:'visited',visitCount:1,notes:'豚骨拉面浓郁，溏心蛋完美'});
+  const s3=DB.add('stores',{name:'秘密花园咖啡馆',address:'杭州市西湖区龙井路88号',location:{lat:30.2489,lng:120.1265},tags:['甜品','拍照好看','约会餐厅'],cuisine:'甜品',avgPrice:45,rating:{taste:3.5,environment:5,service:4,value:3},coverImage:'',status:'wishlist',visitCount:0,notes:'听说环境很好，适合拍照'});
+  DB.add('dishes',{storeId:s1._id,name:'招牌毛肚',price:48,photos:[],category:'招牌必点',rating:5,tags:['必点'],notes:'七上八下，口感脆嫩'});
+  DB.add('dishes',{storeId:s1._id,name:'鸭血',price:22,photos:[],category:'热菜/主菜',rating:4.5,tags:['推荐'],notes:'新鲜嫩滑'});
+  DB.add('dishes',{storeId:s1._id,name:'黄喉',price:32,photos:[],category:'热菜/主菜',rating:4,tags:['推荐'],notes:'切得薄，口感好'});
+  DB.add('dishes',{storeId:s2._id,name:'豚骨拉面',price:45,photos:[],category:'招牌必点',rating:4.5,tags:['必点'],notes:'汤底浓郁，面有嚼劲'});
+  DB.add('dishes',{storeId:s2._id,name:'煎饺',price:18,photos:[],category:'主食/面点',rating:4,tags:['推荐'],notes:''});
+  DB.add('visits',{storeId:s1._id,storeName:'老张火锅',date:'2026-05-15',dishes:[{dishId:s1._id+'d1',name:'招牌毛肚',price:48},{dishId:s1._id+'d2',name:'鸭血',price:22}],totalCost:210,personCount:3,rating:{taste:5,environment:3,service:4,value:4},notes:'三个朋友一起来，吃到撑',photos:[]});
+  DB.add('visits',{storeId:s2._id,storeName:'一风堂拉面',date:'2026-05-20',dishes:[{dishId:s2._id+'d1',name:'豚骨拉面',price:45}],totalCost:63,personCount:1,rating:{taste:4,environment:4,service:5,value:4},notes:'一个人来吃午饭',photos:[]});
+  DB.add('wishlist',{name:'巷子里的烧烤摊',address:'重庆渝中区解放碑附近',reason:'朋友说很好吃，而且便宜',source:'朋友推荐'});
+}
+
+// ========== TOAST ==========
+function showToast(msg,type='info'){
+  const c=document.getElementById('toast-container');
+  const t=document.createElement('div');
+  t.className='toast toast--'+type;t.textContent=msg;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(()=>t.remove(),300)},2000);
+}
+
+// ========== MODAL ==========
+function showModal(title,content,onConfirm,confirmLabel='确认',danger=false){
+  const c=document.getElementById('modal-container');
+  const variant=danger?'danger':'primary';
+  c.innerHTML=`
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <div class="modal__hd"><span>${esc(title)}</span><span class="modal__close" id="modalClose">✕</span></div>
+        <div class="modal__bd">${content}</div>
+        <div class="modal__ft">
+          <button class="pxl-btn pxl-btn--sm" id="modalCancel">取消</button>
+          ${onConfirm?`<button class="pxl-btn pxl-btn--sm pxl-btn--${variant}" id="modalConfirm">${confirmLabel}</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('modalClose').onclick=document.getElementById('modalCancel').onclick=()=>c.innerHTML='';
+  document.getElementById('modalOverlay').onclick=e=>{if(e.target.id==='modalOverlay')c.innerHTML=''};
+  if(onConfirm)document.getElementById('modalConfirm').onclick=()=>{onConfirm();c.innerHTML=''};
+}
+
+// ========== LIGHTBOX ==========
+function showLightbox(src){
+  const c=document.getElementById('lightbox-container');
+  c.innerHTML=`<div class="lightbox" id="lightbox"><img src="${src}"></div>`;
+  document.getElementById('lightbox').onclick=()=>c.innerHTML='';
+}
+
+// ========== IMAGE PICKER & COMPRESSION ==========
+function compressImage(file,maxW=400,quality=0.5){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        let w=img.width,h=img.height;
+        if(w>maxW){h=h*maxW/w;w=maxW}
+        canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',quality));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function pickImages(multi=true){
+  return new Promise(resolve=>{
+    const input=document.getElementById('photoInput');
+    input.multiple=multi;input.value='';
+    input.onchange=async()=>{
+      const files=Array.from(input.files);
+      const results=[];
+      for(const f of files){results.push(await compressImage(f))}
+      resolve(results);
+    };
+    input.click();
+  });
+}
+
+function compressAllPhotos(){
+  const allKeys=[STORAGE_KEYS.stores,STORAGE_KEYS.dishes,STORAGE_KEYS.visits];
+  let count=0;
+  allKeys.forEach(k=>{
+    const data=DB.load(k);
+    data.forEach(item=>{
+      let changed=false;
+      if(item.coverImage&&item.coverImage.startsWith('data:image')&&item.coverImage.length>50000){
+        // Re-compress coverImage
+        const img=new Image();
+        img.src=item.coverImage;
+        const canvas=document.createElement('canvas');
+        canvas.width=300;canvas.height=225;
+        canvas.getContext('2d').drawImage(img,0,0,300,225);
+        item.coverImage=canvas.toDataURL('image/jpeg',0.4);
+        changed=true;
+      }
+      if(item.photos)item.photos=item.photos.filter(p=>p&&p.startsWith('data:image')).map(p=>{
+        if(p.length>50000){count++;return compressExistingImg(p)}return p;
+      });
+      if(changed){DB.update(k.replace('t_',''),item._id,item)}
+    });
+  });
+  return count;
+}
+
+function compressExistingImg(src){
+  const canvas=document.createElement('canvas');
+  canvas.width=300;canvas.height=225;
+  const ctx=canvas.getContext('2d');
+  const img=new Image();
+  img.src=src;
+  ctx.drawImage(img,0,0,300,225);
+  return canvas.toDataURL('image/jpeg',0.4);
+}
+
+// ========== COMPONENT FACTORIES ==========
+const C={};
+
+C.starRating=function(value,opts={}){
+  const{size='md',interactive=false,name='',onChange}=opts;
+  let html=`<span class="star-rating star-rating--${size}" data-component="star-rating" data-name="${name}">`;
+  for(let i=1;i<=5;i++){
+    const filled=i<=Math.round(value);
+    html+=`<span class="star ${filled?'star--filled':'star--empty'} ${interactive?'star--interactive':''}"
+      data-value="${i}" data-name="${name}">${filled?'◆':'◇'}</span>`;
+  }
+  html+='</span>';
+  return html;
+};
+
+C.tagChip=function(label,active=false,variant=''){
+  const cls=active?'active':'';
+  const vcls=variant?` tag-chip--${variant}`:'';
+  return `<span class="tag-chip ${cls}${vcls}" data-chip="${label}">${esc(label)}</span>`;
+};
+
+C.pxlBtn=function(label,variant='',size='',block=false,attrs=''){
+  const cls=['pxl-btn',variant?`pxl-btn--${variant}`:'',size?`pxl-btn--${size}`:'',block?'pxl-btn--block':''].filter(Boolean).join(' ');
+  return `<button class="${cls}" ${attrs}>${esc(label)}</button>`;
+};
+
+C.pxlInput=function(label,name,value='',type='text',placeholder=''){
+  return `<div class="pxl-input-group">
+    <label class="pxl-input-label">${esc(label)}</label>
+    <input class="pxl-input" name="${name}" value="${esc(value)}" type="${type}" placeholder="${placeholder}">
+  </div>`;
+};
+
+C.pxlSelect=function(label,name,options,selected=''){
+  const opts=options.map(o=>`<option value="${esc(o)}" ${o===selected?'selected':''}>${esc(o)}</option>`).join('');
+  return `<div class="pxl-input-group">
+    <label class="pxl-input-label">${esc(label)}</label>
+    <select class="pxl-select" name="${name}">${opts}</select>
+  </div>`;
+};
+
+C.pxlTextarea=function(label,name,value='',placeholder=''){
+  return `<div class="pxl-input-group">
+    <label class="pxl-input-label">${esc(label)}</label>
+    <textarea class="pxl-textarea" name="${name}" placeholder="${placeholder}">${esc(value)}</textarea>
+  </div>`;
+};
+
+C.statBar=function(label,value,max,variant=''){
+  const pct=Math.min(100,Math.round((value/max)*100));
+  const vcls=variant?` stat-bar__fill--${variant}`:'';
+  return `<div class="stat-bar">
+    <span class="stat-bar__label">${esc(label)}</span>
+    <div class="stat-bar__track"><div class="stat-bar__fill${vcls}" style="width:${pct}%"></div></div>
+    <span class="stat-bar__val">${value}/${max}</span>
+  </div>`;
+};
+
+C.emptyState=function(icon,title,desc,btnLabel,btnAttrs){
+  const btn=btnLabel?C.pxlBtn(btnLabel,'primary','sm',false,btnAttrs):'';
+  return `<div class="empty-state">
+    <div class="empty-state__icon">${icon}</div>
+    <div class="empty-state__title">${esc(title)}</div>
+    <div class="empty-state__desc">${esc(desc)}</div>
+    ${btn}
+  </div>`;
+};
+
+C.storeCard=function(store){
+  const stars=C.starRating((store.rating.taste+store.rating.environment+store.rating.service+store.rating.value)/4);
+  const tags=store.tags.slice(0,3).map(t=>C.tagChip(t)).join('');
+  const img=store.coverImage
+    ?`<img class="store-card__img" src="${store.coverImage}" alt="" loading="lazy">`
+    :`<div class="store-card__img store-card__img--placeholder">🏪</div>`;
+  const statusIcon=store.status==='wishlist'?' 💝':' ✅';
+  return `<div class="store-card" data-route="store-detail/${store._id}">
+    ${img}
+    <div class="store-card__info">
+      <div class="store-card__name">${esc(store.name)}${statusIcon}</div>
+      <div class="store-card__tags">${tags}</div>
+      <div class="store-card__meta">
+        <span>${stars}</span>
+        <span>人均 ¥${fmt(store.avgPrice)}</span>
+      </div>
+    </div>
+  </div>`;
+};
+
+C.dishRow=function(dish,storeId){
+  const thumb=dish.photos&&dish.photos.length
+    ?`<img class="dish-row__thumb" src="${dish.photos[0]}" alt="">`
+    :`<div class="dish-row__thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem">🍽️</div>`;
+  const tags=dish.tags.map(t=>C.tagChip(t,t==='必点','success')).join('');
+  return `<div class="dish-row">
+    ${thumb}
+    <div class="dish-row__info">
+      <div class="dish-row__name">${esc(dish.name)}</div>
+      <div class="dish-row__meta">
+        <span>¥${fmt(dish.price)}</span>
+        <span>${dish.category||''}</span>
+        ${C.starRating(dish.rating,{size:'sm'})}
+      </div>
+      <div style="margin-top:2px">${tags}</div>
+    </div>
+    <div class="dish-row__actions">
+      <button class="pxl-btn pxl-btn--sm" data-route="dish-edit/${storeId}/${dish._id}">✏️</button>
+      <button class="pxl-btn pxl-btn--sm pxl-btn--danger" data-action="delete-dish" data-id="${dish._id}" data-store="${storeId}">✕</button>
+    </div>
+  </div>`;
+};
+
+// ========== VIEW RENDERER ==========
+const V={};
+
+V.index=function(){
+  const stores=DB.getAll('stores');
+  // Filters
+  const filterStatus=App.filters.status||'all';
+  const filterCuisine=App.filters.cuisine||'all';
+  const filterTag=App.filters.tag||'all';
+
+  let filtered=stores;
+  if(filterStatus!=='all')filtered=filtered.filter(s=>s.status===filterStatus);
+  if(filterCuisine!=='all')filtered=filtered.filter(s=>s.cuisine===filterCuisine);
+  if(filterTag!=='all')filtered=filtered.filter(s=>s.tags.includes(filterTag));
+
+  // Sort by updateTime desc
+  filtered.sort((a,b)=>new Date(b.updateTime)-new Date(a.updateTime));
+
+  const visitedCount=stores.filter(s=>s.status==='visited').length;
+  const wishCount=stores.filter(s=>s.status==='wishlist').length;
+  const totalVisits=DB.getAll('visits').length;
+
+  // Status bar
+  let html=`<div class="card">
+    <div class="card__bd" style="text-align:center">
+      <div style="font-family:var(--font-display);font-size:var(--fs-sm);color:var(--color-accent)">🏴 行走的宝藏店</div>
+      <div style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-top:6px">
+        已探索 <span style="color:var(--color-primary)">${visitedCount}</span> 家 ·
+        心愿单 <span style="color:var(--color-accent)">${wishCount}</span> 家 ·
+        记录 <span style="color:var(--color-info)">${totalVisits}</span> 次
+      </div>
+    </div>
+  </div>`;
+
+  // Search link
+  html+=`<div style="margin-bottom:8px">${C.pxlBtn('🔍 搜索店铺 / 菜品','','sm',true,'data-route="search"')}</div>`;
+
+  // Filter chips
+  const allCuisines=['all',...CUISINES.filter(c=>stores.some(s=>s.cuisine===c))];
+  html+=`<div class="chips-row">`;
+  html+=`<span class="tag-chip ${filterStatus==='all'?'active':''}" data-filter="status" data-val="all">全部</span>`;
+  html+=`<span class="tag-chip tag-chip--accent ${filterStatus==='visited'?'active':''}" data-filter="status" data-val="visited">✅ 去过</span>`;
+  html+=`<span class="tag-chip tag-chip--info ${filterStatus==='wishlist'?'active':''}" data-filter="status" data-val="wishlist">💝 想去</span>`;
+  html+=`</div>`;
+  html+=`<div class="chips-row" style="flex-wrap:wrap">`;
+  allCuisines.forEach(c=>{
+    html+=C.tagChip(c==='all'?'全部菜系':c,filterCuisine===c,c==='all'?'':'accent');
+  });
+  html+=`</div>`;
+  html+=`<div class="chips-row" style="flex-wrap:wrap">`;
+  const allTags=['all',...TAGS.filter(t=>stores.some(s=>s.tags.includes(t)))];
+  allTags.forEach(t=>{
+    html+=C.tagChip(t==='all'?'全部标签':t,filterTag===t,t==='all'?'':'info');
+  });
+  html+=`</div>`;
+
+  if(filtered.length===0){
+    html+=C.emptyState('🗺️','还没有宝藏店','点击下方 + 按钮添加你的第一家宝藏店！','添加宝藏店','data-route="store-edit"');
+  }else{
+    // Manual waterfall (2 columns)
+    let leftH=0,rightH=0,leftHTML='',rightHTML='';
+    filtered.forEach(store=>{
+      // Estimate card height: image (aspect 4/3 ~ 150px on ~175px width) + info (~80px) + margin
+      const estH=store.coverImage?230:200;
+      const card=C.storeCard(store);
+      if(leftH<=rightH){leftHTML+=card;leftH+=estH}
+      else{rightHTML+=card;rightH+=estH}
+    });
+    html+=`<div class="waterfall"><div class="waterfall__col">${leftHTML}</div><div class="waterfall__col">${rightHTML}</div></div>`;
+  }
+
+  return html;
+};
+
+V['store-detail']=function(){
+  const store=DB.getById('stores',App.currentStoreId);
+  if(!store)return C.emptyState('🔍','店铺不存在','可能已被删除','返回首页','data-route="index"');
+
+  const dishes=DB.getAll('dishes').filter(d=>d.storeId===store._id);
+  const visits=DB.getAll('visits').filter(v=>v.storeId===store._id);
+  visits.sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  // Recompute avgPrice
+  const dishPrices=dishes.map(d=>d.price);
+  const avgPrice=dishPrices.length?Math.round(dishPrices.reduce((a,b)=>a+b,0)/dishPrices.length):store.avgPrice;
+
+  // Recompute store rating averages from visits
+  let avgRating=store.rating;
+  if(visits.length){
+    avgRating={
+      taste:getAvg(visits.map(v=>v.rating),'taste')||store.rating.taste,
+      environment:getAvg(visits.map(v=>v.rating),'environment')||store.rating.environment,
+      service:getAvg(visits.map(v=>v.rating),'service')||store.rating.service,
+      value:getAvg(visits.map(v=>v.rating),'value')||store.rating.value,
+    };
+  }
+
+  const statusLabel=store.status==='wishlist'?'💝 想去':'✅ 去过';
+  const coverImg=store.coverImage
+    ?`<img src="${store.coverImage}" style="width:100%;max-height:300px;object-fit:cover;border:2px solid var(--border-color);image-rendering:pixelated" alt="">`
+    :'';
+  const tags=store.tags.map(t=>C.tagChip(t)).join(' ');
+
+  let html=`<div class="back-bar"><span class="back-btn" data-action="back">◀ 返回</span></div>`;
+
+  // Store header
+  html+=`<div class="card">
+    ${coverImg}
+    <div class="card__bd">
+      <div style="font-family:var(--font-display);font-size:var(--fs-lg);color:var(--color-accent);margin-bottom:4px">${esc(store.name)}</div>
+      <div style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-bottom:6px">📍 ${esc(store.address)} ${statusLabel} · 到访 ${store.visitCount} 次</div>
+      <div style="margin-bottom:8px">${tags}</div>
+      ${C.statBar('口味',Math.round(avgRating.taste),5,'accent')}
+      ${C.statBar('环境',Math.round(avgRating.environment),5,'info')}
+      ${C.statBar('服务',Math.round(avgRating.service),5,'success')}
+      ${C.statBar('性价比',Math.round(avgRating.value),5,'primary')}
+      <div style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-top:4px">人均 ¥${fmt(avgPrice)} · ${dishes.length}道菜品</div>
+      ${store.notes?`<div style="font-size:var(--fs-sm);margin-top:8px;font-style:italic;color:var(--color-text-dim)">「${esc(store.notes)}」</div>`:''}
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <a href="#" data-action="open-map" data-lat="${store.location.lat}" data-lng="${store.location.lng}" data-name="${esc(store.name)}" class="pxl-btn pxl-btn--sm">🗺️ 地图</a>
+        <button class="pxl-btn pxl-btn--sm" data-route="store-edit/${store._id}">✏️ 编辑</button>
+        <button class="pxl-btn pxl-btn--sm" data-route="share-card/${store._id}">📤 分享</button>
+        <button class="pxl-btn pxl-btn--sm pxl-btn--danger" data-action="delete-store" data-id="${store._id}">🗑️ 删除</button>
+      </div>
+    </div>
+  </div>`;
+
+  // Dishes section
+  html+=`<div class="section-title">🍽️ 菜品 (${dishes.length})</div>`;
+  if(dishes.length===0){
+    html+=`<div style="text-align:center;padding:16px;font-size:var(--fs-xs);color:var(--color-text-dim)">还没有记录菜品</div>`;
+  }else{
+    html+=`<div class="card"><div class="card__bd" style="padding:8px 14px">`;
+    dishes.forEach(d=>{html+=C.dishRow(d,store._id)});
+    html+=`</div></div>`;
+  }
+  html+=`<div style="margin-bottom:12px">${C.pxlBtn('＋ 添加菜品','primary','sm',true,`data-route="dish-edit/${store._id}"`)}</div>`;
+
+  // Visits section
+  html+=`<div class="section-title">📝 探店记录 (${visits.length})</div>`;
+  if(visits.length===0){
+    html+=`<div style="text-align:center;padding:16px;font-size:var(--fs-xs);color:var(--color-text-dim)">还没有探店记录</div>`;
+  }else{
+    html+=`<div class="card"><div class="card__bd">`;
+    visits.forEach(v=>{
+      html+=`<div class="timeline-item">
+        <div class="timeline-item__date">📅 ${v.date}</div>
+        <div class="timeline-item__summary">${v.dishes.map(d=>d.name).join('、')}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <div class="timeline-item__cost">¥${fmt(v.totalCost)} / ${v.personCount}人</div>
+          <div>${C.starRating((v.rating.taste+v.rating.environment+v.rating.service+v.rating.value)/4,{size:'sm'})}</div>
+          <button class="pxl-btn pxl-btn--sm" data-route="visit-record/${store._id}/${v._id}">✏️</button>
+        </div>
+        ${v.notes?`<div style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-top:4px)">「${esc(v.notes)}」</div>`:''}
+      </div>`;
+    });
+    html+=`</div></div>`;
+  }
+  html+=`<div style="margin-bottom:12px">${C.pxlBtn('＋ 记录探店','accent','sm',true,`data-route="visit-record/${store._id}"`)}</div>`;
+
+  return html;
+};
+
+V['store-edit']=function(){
+  const isEdit=!!App.currentStoreId;
+  const store=isEdit?DB.getById('stores',App.currentStoreId):null;
+  const title=isEdit?'编辑店铺':'添加宝藏店';
+
+  let html=`<div class="back-bar"><span class="back-btn" data-action="back">◀ 返回</span></div>`;
+  html+=`<div class="card">
+    <div class="card__hd">🏪 ${title}</div>
+    <div class="card__bd">
+      <form id="storeForm" data-form="store-edit" data-edit="${isEdit?store._id:''}">
+        ${C.pxlInput('店名*','name',store?store.name:'','text','输入店铺名称')}
+        ${C.pxlInput('地址','address',store?store.address:'','text','输入详细地址')}
+        <div style="display:flex;gap:8px">
+          <div style="flex:1">${C.pxlInput('纬度','lat',store?String(store.location.lat):'','number','如 30.6598')}</div>
+          <div style="flex:1">${C.pxlInput('经度','lng',store?String(store.location.lng):'','number','如 104.0636')}</div>
+        </div>
+        <button type="button" class="pxl-btn pxl-btn--sm" data-action="get-location" style="margin-bottom:12px">📍 获取当前位置</button>
+        ${C.pxlInput('人均价格','avgPrice',store?String(store.avgPrice):'','number','¥')}
+        ${C.pxlSelect('菜系','cuisine',CUISINES,store?store.cuisine:'')}
+        <div class="pxl-input-group">
+          <label class="pxl-input-label">标签（点击选择）</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px" data-component="tag-select" data-name="tags">
+            ${TAGS.map(t=>C.tagChip(t,store&&store.tags.includes(t))).join('')}
+          </div>
+        </div>
+        ${C.pxlSelect('状态','status',['visited','wishlist'],store?store.status:'visited')}
+        <div class="pxl-input-group">
+          <label class="pxl-input-label">封面图片</label>
+          ${store&&store.coverImage?`<img src="${store.coverImage}" class="preview-img" id="coverPreview">`:''}
+          <img class="preview-img" id="coverPreviewNew" style="display:none">
+          <input type="hidden" name="coverImage" value="${store&&store.coverImage?store.coverImage:''}" id="coverImageInput">
+          <button type="button" class="pxl-btn pxl-btn--sm" data-action="pick-cover">📷 选择图片</button>
+        </div>
+        ${C.pxlTextarea('备注','notes',store?store.notes:'','记录这家店的特点...')}
+        <div style="display:flex;gap:8px;margin-top:12px">
+          ${C.pxlBtn('💾 保存','primary','',true,'type="submit"')}
+          <button type="button" class="pxl-btn pxl-btn--sm pxl-btn--danger" data-action="back" style="flex:1">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+  return html;
+};
+
+V['dish-edit']=function(){
+  const storeId=App.currentStoreId;
+  const dishId=App.currentDishId;
+  const isEdit=!!dishId;
+  const dish=isEdit?DB.getById('dishes',dishId):null;
+  const store=DB.getById('stores',storeId);
+  if(!store)return C.emptyState('🔍','店铺不存在','','返回','data-route="index"');
+
+  let html=`<div class="back-bar"><span class="back-btn" data-action="back">◀ 返回 ${esc(store.name)}</span></div>`;
+  html+=`<div class="card">
+    <div class="card__hd">🍽️ ${isEdit?'编辑菜品':'添加菜品'}</div>
+    <div class="card__bd">
+      <form data-form="dish-edit" data-store="${storeId}" data-edit="${isEdit?dishId:''}">
+        ${C.pxlInput('菜品名称*','name',dish?dish.name:'','text','输入菜品名')}
+        ${C.pxlInput('价格*','price',dish?String(dish.price):'','number','¥')}
+        ${C.pxlSelect('分类','category',DISH_CATEGORIES,dish?dish.category:'招牌必点')}
+        <div class="pxl-input-group">
+          <label class="pxl-input-label">评分</label>
+          ${C.starRating(dish?dish.rating:4,{size:'lg',interactive:true,name:'dishRating'})}
+          <input type="hidden" name="rating" value="${dish?dish.rating:4}" id="dishRatingVal">
+        </div>
+        <div class="pxl-input-group">
+          <label class="pxl-input-label">标签</label>
+          <div style="display:flex;gap:6px" data-component="tag-select" data-name="tags">
+            ${DISH_TAGS.map(t=>C.tagChip(t,dish&&dish.tags.includes(t),t==='必点'?'success':t==='踩雷'?'danger':'')).join('')}
+          </div>
+        </div>
+        <div class="pxl-input-group">
+          <label class="pxl-input-label">菜品照片</label>
+          <div class="preview-imgs" id="dishPhotosPreview">
+            ${dish&&dish.photos?dish.photos.map(p=>`<img src="${p}" class="preview-img">`).join(''):''}
+          </div>
+          <input type="hidden" name="photos" value='${dish&&dish.photos?JSON.stringify(dish.photos):'[]'}' id="dishPhotosInput">
+          <button type="button" class="pxl-btn pxl-btn--sm" data-action="pick-photos">📷 添加照片</button>
+        </div>
+        ${C.pxlTextarea('点评','notes',dish?dish.notes:'','味道如何？有什么特点？')}
+        <div style="display:flex;gap:8px;margin-top:12px">
+          ${C.pxlBtn('💾 保存','primary','',true,'type="submit"')}
+          <button type="button" class="pxl-btn pxl-btn--sm pxl-btn--danger" data-action="back" style="flex:1">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+  return html;
+};
+
+V['visit-record']=function(){
+  const storeId=App.currentStoreId;
+  const visitId=App.currentVisitId;
+  const isEdit=!!visitId;
+  const visit=isEdit?DB.getById('visits',visitId):null;
+  const store=DB.getById('stores',storeId);
+  if(!store)return C.emptyState('🔍','店铺不存在','','返回','data-route="index"');
+
+  const dishes=DB.getAll('dishes').filter(d=>d.storeId===storeId);
+  const visitDishIds=visit?visit.dishes.map(d=>d.dishId):[];
+
+  let html=`<div class="back-bar"><span class="back-btn" data-action="back">◀ 返回 ${esc(store.name)}</span></div>`;
+  html+=`<div class="card">
+    <div class="card__hd">📝 ${isEdit?'编辑探店记录':'记录探店'}</div>
+    <div class="card__bd">
+      <form data-form="visit-record" data-store="${storeId}" data-edit="${isEdit?visitId:''}">
+        ${C.pxlInput('日期*','date',visit?visit.date:today(),'date')}
+        ${C.pxlInput('人数','personCount',visit?String(visit.personCount):'2','number')}
+        <div class="pxl-input-group">
+          <label class="pxl-input-label">本次点的菜品</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px" data-component="dish-check" data-name="dishes">
+            ${dishes.map(d=>{
+              const checked=visitDishIds.includes(d._id);
+              return `<span class="tag-chip ${checked?'active':''}" data-dish-id="${d._id}" data-dish-name="${esc(d.name)}" data-dish-price="${d.price}">${esc(d.name)} ¥${fmt(d.price)}</span>`;
+            }).join('')}
+          </div>
+          ${dishes.length===0?'<div style="font-size:var(--fs-xs);color:var(--color-text-dim)">暂无菜品，请先添加菜品</div>':''}
+          <input type="hidden" name="selectedDishes" value='${visit?JSON.stringify(visit.dishes):'[]'}' id="selectedDishesInput">
+        </div>
+        ${C.pxlInput('总花费','totalCost',visit?String(visit.totalCost):'','number','¥（可根据选中菜品自动计算）')}
+        <div class="pxl-input-group"><label class="pxl-input-label">本次评分</label></div>
+        ${C.starRating(visit?visit.rating.taste:4,{size:'md',interactive:true,name:'taste'})}
+        <span style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-left:8px">口味</span>
+        <input type="hidden" name="taste" value="${visit?visit.rating.taste:4}">
+        <div style="margin-top:4px">
+        ${C.starRating(visit?visit.rating.environment:4,{size:'md',interactive:true,name:'environment'})}
+        <span style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-left:8px">环境</span>
+        <input type="hidden" name="environment" value="${visit?visit.rating.environment:4}">
+        </div>
+        <div style="margin-top:4px">
+        ${C.starRating(visit?visit.rating.service:4,{size:'md',interactive:true,name:'service'})}
+        <span style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-left:8px">服务</span>
+        <input type="hidden" name="service" value="${visit?visit.rating.service:4}">
+        </div>
+        <div style="margin-top:4px">
+        ${C.starRating(visit?visit.rating.value:4,{size:'md',interactive:true,name:'value'})}
+        <span style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-left:8px">性价比</span>
+        <input type="hidden" name="value" value="${visit?visit.rating.value:4}">
+        </div>
+        ${C.pxlTextarea('探店笔记','notes',visit?visit.notes:'','记录这次探店的感受...')}
+        <div style="display:flex;gap:8px;margin-top:12px">
+          ${C.pxlBtn('💾 保存','primary','',true,'type="submit"')}
+          <button type="button" class="pxl-btn pxl-btn--sm pxl-btn--danger" data-action="back" style="flex:1">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+  return html;
+};
+
+V['photo-wall']=function(){
+  // Collect all photos from all entities
+  const photos=[];
+  DB.getAll('stores').forEach(s=>{if(s.coverImage)photos.push({src:s.coverImage,label:s.name,type:'店铺封面',storeId:s._id})});
+  DB.getAll('dishes').forEach(d=>{
+    if(d.photos)d.photos.forEach((p,i)=>{photos.push({src:p,label:d.name,type:'菜品',storeId:d.storeId})});
+  });
+  DB.getAll('visits').forEach(v=>{
+    if(v.photos)v.photos.forEach((p,i)=>{photos.push({src:p,label:v.storeName,type:'探店照片',storeId:v.storeId})});
+  });
+
+  let html=`<div class="back-bar"><span class="back-btn" data-action="back">◀ 返回</span></div>`;
+  html+=`<div class="card"><div class="card__hd">📷 图片墙 · ${photos.length} 张</div>`;
+  html+=`<div class="card__bd">`;
+
+  if(photos.length===0){
+    html+=C.emptyState('📷','还没有照片','添加店铺封面、菜品照片或探店记录后，照片会出现在这里');
+  }else{
+    html+=`<div class="photo-grid">`;
+    photos.forEach((p,i)=>{
+      html+=`<img src="${p.src}" class="photo-grid__item" data-lightbox="${i}" alt="${esc(p.label)}" title="${esc(p.label)} - ${p.type}">`;
+    });
+    html+=`</div>`;
+  }
+  html+=`</div></div>`;
+
+  // Store photo data for lightbox
+  App._photoData=photos;
+
+  return html;
+};
+
+V.wishlist=function(){
+  const items=DB.getAll('wishlist');
+  let html=`<div class="card"><div class="card__hd">💝 心愿单 · ${items.length} 家</div>`;
+  html+=`<div class="card__bd">`;
+
+  if(items.length===0){
+    html+=C.emptyState('💝','心愿单是空的','把你种草但还没去的店记下来！','添加心愿','data-action="show-wishlist-form"');
+  }else{
+    items.forEach(item=>{
+      html+=`<div class="wishlist-item">
+        <div class="wishlist-item__name">🏪 ${esc(item.name)}</div>
+        <div class="wishlist-item__addr">📍 ${esc(item.address)}</div>
+        <div class="wishlist-item__reason">「${esc(item.reason)}」</div>
+        ${item.source?`<span class="wishlist-item__source">${esc(item.source)}</span>`:''}
+        <div class="wishlist-item__actions">
+          <button class="pxl-btn pxl-btn--sm pxl-btn--primary" data-action="wishlist-to-store" data-id="${item._id}">🔄 转为店铺</button>
+          <button class="pxl-btn pxl-btn--sm pxl-btn--danger" data-action="delete-wishlist" data-id="${item._id}">🗑️</button>
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div></div>`;
+  html+=`<div style="margin-top:8px">${C.pxlBtn('＋ 添加心愿','accent','',true,'data-action="show-wishlist-form"')}</div>`;
+
+  // Wishlist form (hidden initially, shown via modal)
+  html+=`<div id="wishlistFormCard" style="display:none">
+    <div class="card">
+      <div class="card__hd">💝 添加心愿</div>
+      <div class="card__bd">
+        <form data-form="wishlist-add">
+          ${C.pxlInput('店名*','name','','text','输入店名')}
+          ${C.pxlInput('地址','address','','text','大致地址')}
+          ${C.pxlInput('想去的理由','reason','','text','为什么想去？')}
+          ${C.pxlSelect('来源','source',WISHLIST_SOURCES,'')}
+          ${C.pxlBtn('💾 添加到心愿单','primary','',true,'type="submit"')}
+        </form>
+      </div>
+    </div>
+  </div>`;
+
+  return html;
+};
+
+V.statistics=function(){
+  const stores=DB.getAll('stores');
+  const visits=DB.getAll('visits');
+  const dishes=DB.getAll('dishes');
+  const wishlist=DB.getAll('wishlist');
+
+  const visited=stores.filter(s=>s.status==='visited');
+  const wishing=stores.filter(s=>s.status==='wishlist');
+  const totalCost=visits.reduce((s,v)=>s+(Number(v.totalCost)||0),0);
+  const avgCost=visits.length?Math.round(totalCost/visits.length):0;
+  const totalPersons=visits.reduce((s,v)=>s+(Number(v.personCount)||0),0);
+  const perPersonCost=totalPersons?Math.round(totalCost/totalPersons):0;
+
+  // Cuisine distribution
+  const cuisineMap={};
+  visited.forEach(s=>{const c=s.cuisine||'其他';cuisineMap[c]=(cuisineMap[c]||0)+1});
+  const cuisineEntries=Object.entries(cuisineMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxCuisine=Math.max(...cuisineEntries.map(e=>e[1]),1);
+
+  // Monthly spending bar chart
+  const monthlyMap={};
+  visits.forEach(v=>{const m=v.date.slice(0,7);monthlyMap[m]=(monthlyMap[m]||0)+(Number(v.totalCost)||0)});
+  const monthlyEntries=Object.entries(monthlyMap).sort().slice(-12);
+  const maxMonthly=Math.max(...monthlyEntries.map(e=>e[1]),1);
+
+  // Rating trends
+  const avgTaste=getAvg(visits.map(v=>v.rating),'taste');
+  const avgEnv=getAvg(visits.map(v=>v.rating),'environment');
+  const avgSvc=getAvg(visits.map(v=>v.rating),'service');
+  const avgVal=getAvg(visits.map(v=>v.rating),'value');
+
+  let html=`<div class="card"><div class="card__hd">📊 消费统计</div><div class="card__bd">`;
+  html+=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;text-align:center;margin-bottom:16px">`;
+  html+=`<div><div style="font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-text-dim)">总消费</div><div class="stats-big-num">¥${fmt(totalCost)}</div></div>`;
+  html+=`<div><div style="font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-text-dim)">人均/次</div><div class="stats-big-num">¥${fmt(perPersonCost)}</div></div>`;
+  html+=`<div><div style="font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-text-dim)">探店次数</div><div class="stats-big-num">${visits.length}</div></div>`;
+  html+=`<div><div style="font-family:var(--font-display);font-size:var(--fs-xs);color:var(--color-text-dim)">去过/心愿</div><div class="stats-big-num">${visited.length}/${wishing.length+wishlist.length}</div></div>`;
+  html+=`</div></div></div>`;
+
+  // Rating overview
+  html+=`<div class="card"><div class="card__hd">⭐ 综合评分</div><div class="card__bd">`;
+  html+=C.statBar('口味',Math.round(avgTaste*10)/10,5,'accent');
+  html+=C.statBar('环境',Math.round(avgEnv*10)/10,5,'info');
+  html+=C.statBar('服务',Math.round(avgSvc*10)/10,5,'success');
+  html+=C.statBar('性价比',Math.round(avgVal*10)/10,5,'primary');
+  html+=`</div></div>`;
+
+  // Monthly bar chart
+  html+=`<div class="card"><div class="card__hd">📅 月度消费趋势</div><div class="card__bd">`;
+  if(monthlyEntries.length===0){
+    html+=`<div style="text-align:center;padding:16px;font-size:var(--fs-xs);color:var(--color-text-dim)">暂无数据</div>`;
+  }else{
+    html+=`<div class="stats-bar-chart">`;
+    monthlyEntries.forEach(([month,cost])=>{
+      const h=Math.round((cost/maxMonthly)*100);
+      html+=`<div class="stats-bar-col"><div class="stats-bar-col__bar" style="height:${h}px"></div><div class="stats-bar-col__label">${month.slice(5)}</div></div>`;
+    });
+    html+=`</div>`;
+  }
+  html+=`</div></div>`;
+
+  // Cuisine distribution
+  html+=`<div class="card"><div class="card__hd">🍳 菜系分布</div><div class="card__bd">`;
+  if(cuisineEntries.length===0){
+    html+=`<div style="text-align:center;padding:16px;font-size:var(--fs-xs);color:var(--color-text-dim)">暂无数据</div>`;
+  }else{
+    cuisineEntries.forEach(([cuisine,count])=>{
+      html+=C.statBar(cuisine,count,maxCuisine,'primary');
+    });
+  }
+  html+=`</div></div>`;
+
+  return html;
+};
+
+V.search=function(){
+  const query=App.searchQuery||'';
+  let html=`<div class="back-bar"><span class="back-btn" data-action="back">◀ 返回</span></div>`;
+  html+=`<div class="card"><div class="card__bd">
+    <div class="pxl-input-group" style="margin-bottom:0">
+      <input class="pxl-input" id="searchInput" value="${esc(query)}" placeholder="搜索店铺、菜品..." autofocus>
+    </div>
+  </div></div>`;
+
+  if(query){
+    const q=query.toLowerCase();
+    const matchedStores=DB.getAll('stores').filter(s=>
+      s.name.toLowerCase().includes(q)||s.address.toLowerCase().includes(q)||
+      s.cuisine.toLowerCase().includes(q)||s.tags.some(t=>t.toLowerCase().includes(q))
+    );
+    const matchedDishes=DB.getAll('dishes').filter(d=>
+      d.name.toLowerCase().includes(q)||d.tags.some(t=>t.toLowerCase().includes(q))||
+      (d.notes||'').toLowerCase().includes(q)
+    );
+
+    html+=`<div class="section-title">🏪 店铺 (${matchedStores.length})</div>`;
+    if(matchedStores.length===0){
+      html+=`<div style="text-align:center;padding:12px;font-size:var(--fs-xs);color:var(--color-text-dim)">无匹配店铺</div>`;
+    }else{
+      html+=`<div class="waterfall"><div class="waterfall__col">`;
+      // Single column for search results
+      matchedStores.forEach(s=>{html+=C.storeCard(s)});
+      html+=`</div><div class="waterfall__col"></div></div>`;
+    }
+
+    html+=`<div class="section-title">🍽️ 菜品 (${matchedDishes.length})</div>`;
+    if(matchedDishes.length===0){
+      html+=`<div style="text-align:center;padding:12px;font-size:var(--fs-xs);color:var(--color-text-dim)">无匹配菜品</div>`;
+    }else{
+      html+=`<div class="card"><div class="card__bd" style="padding:8px 14px">`;
+      matchedDishes.forEach(d=>{
+        html+=C.dishRow(d,d.storeId);
+      });
+      html+=`</div></div>`;
+    }
+  }
+
+  return html;
+};
+
+V['share-card']=function(){
+  const store=DB.getById('stores',App.currentStoreId);
+  if(!store)return C.emptyState('🔍','店铺不存在','','返回首页','data-route="index"');
+
+  const dishes=DB.getAll('dishes').filter(d=>d.storeId===store._id);
+  const topDishes=dishes.filter(d=>d.tags.includes('必点')||d.tags.includes('推荐')).slice(0,3);
+
+  let html=`<div class="back-bar"><span class="back-btn" data-action="back">◀ 返回</span></div>`;
+  html+=`<div class="card"><div class="card__hd">📤 分享卡片</div><div class="card__bd share-preview">
+    <canvas id="shareCanvas" width="750" height="1200" style="width:100%;max-width:375px;aspect-ratio:5/8;"></canvas>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      ${C.pxlBtn('💾 保存图片','primary','sm',false,'data-action="save-share"')}
+      ${C.pxlBtn('📤 分享','accent','sm',false,'data-action="web-share"')}
+    </div>
+  </div></div>`;
+
+  // Defer canvas drawing
+  setTimeout(()=>drawShareCard(store,topDishes),100);
+
+  App._shareStore=store;
+  return html;
+};
+
+V.settings=function(){
+  const settings=DB.getSettings();
+  const bytes=DB.storageBytes();
+  const pct=DB.storagePercent();
+
+  let html=`<div class="card"><div class="card__hd">⚙️ 设置</div><div class="card__bd">`;
+
+  // Theme
+  html+=`<div class="settings-section">
+    <h3>🎨 主题</h3>
+    <div style="display:flex;gap:8px">`;
+  ['pixel','minimal','dark'].forEach(t=>{
+    const labels={pixel:'🕹️ 像素风',minimal:'📄 简约风',dark:'🌙 暗黑风'};
+    html+=`<button class="pxl-btn pxl-btn--sm ${settings.theme===t?'pxl-btn--primary':''}" data-action="set-theme" data-theme="${t}">${labels[t]}</button>`;
+  });
+  html+=`</div></div>`;
+
+  // Storage
+  html+=`<div class="settings-section">
+    <h3>💾 存储用量</h3>
+    ${C.statBar('已用',Math.round(bytes/1024),5120,'primary')}
+    <div style="font-size:var(--fs-xs);color:var(--color-text-dim);margin-top:4px">${(bytes/1024).toFixed(0)} KB / 5 MB (${pct.toFixed(1)}%)</div>
+    ${pct>80?`<div style="color:var(--color-danger);font-size:var(--fs-xs);margin-top:4px">⚠️ 存储空间紧张，建议压缩图片或导出数据</div>`:''}
+  </div>`;
+
+  // Data management
+  html+=`<div class="settings-section">
+    <h3>📦 数据管理</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${C.pxlBtn('📤 导出数据','','sm',false,'data-action="export-data"')}
+      ${C.pxlBtn('📥 导入数据','','sm',false,'data-action="import-data"')}
+      ${C.pxlBtn('🗜️ 压缩所有图片','','sm',false,'data-action="compress-all"')}
+      ${C.pxlBtn('🗑️ 清除所有数据','danger','sm',false,'data-action="clear-all-data"')}
+    </div>
+  </div>`;
+
+  // About
+  html+=`<div class="settings-section">
+    <h3>ℹ️ 关于</h3>
+    <div style="font-size:var(--fs-xs);color:var(--color-text-dim)">
+      <p>行走的宝藏店 v1.0</p>
+      <p>像素风探店记录工具</p>
+      <p>数据存储在浏览器本地</p>
+      <p style="margin-top:4px">Made with ♥ 2026</p>
+    </div>
+  </div>`;
+
+  html+=`</div></div>`;
+  return html;
+};
+
+// ========== SHARE CARD CANVAS ==========
+function drawShareCard(store,topDishes){
+  const canvas=document.getElementById('shareCanvas');
+  if(!canvas)return;
+  const W=750,H=1200;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle='#1a1a2e';
+  ctx.fillRect(0,0,W,H);
+
+  // CRT scanlines
+  ctx.fillStyle='rgba(0,0,0,0.03)';
+  for(let y=0;y<H;y+=4)ctx.fillRect(0,y,W,2);
+
+  // Pixel border
+  ctx.strokeStyle='#e94560';
+  ctx.lineWidth=12;
+  ctx.strokeRect(8,8,W-16,H-16);
+  ctx.strokeStyle='#f5c518';
+  ctx.lineWidth=4;
+  ctx.strokeRect(16,16,W-32,H-32);
+
+  // Title banner
+  ctx.fillStyle='#16213e';
+  ctx.fillRect(40,40,W-80,100);
+  ctx.strokeStyle='#fff';
+  ctx.lineWidth=4;
+  ctx.strokeRect(40,40,W-80,100);
+  ctx.font='36px "Press Start 2P", monospace';
+  ctx.fillStyle='#f5c518';
+  ctx.textAlign='center';
+  ctx.fillText('★ 行走的宝藏店 ★',W/2,105);
+
+  // Cover image
+  if(store.coverImage&&store.coverImage.startsWith('data:image')){
+    const img=new Image();
+    img.onload=()=>{
+      ctx.drawImage(img,70,170,610,380);
+      ctx.strokeStyle='#fff';
+      ctx.lineWidth=4;
+      ctx.strokeRect(70,170,610,380);
+      drawRest(ctx,store,topDishes,W,H);
+    };
+    img.src=store.coverImage;
+  }else{
+    // Placeholder
+    ctx.fillStyle='#16213e';
+    ctx.fillRect(70,170,610,380);
+    ctx.strokeStyle='#fff';
+    ctx.lineWidth=4;
+    ctx.strokeRect(70,170,610,380);
+    ctx.font='120px monospace';
+    ctx.fillStyle='#eaeaea';
+    ctx.textAlign='center';
+    ctx.fillText('🏪',W/2,420);
+    drawRest(ctx,store,topDishes,W,H);
+  }
+}
+
+function drawRest(ctx,store,topDishes,W,H){
+  // Store name
+  ctx.font='42px "Press Start 2P", monospace';
+  ctx.fillStyle='#eaeaea';
+  ctx.textAlign='left';
+  ctx.fillText(store.name,70,620);
+
+  // Info
+  ctx.font='32px "VT323", monospace';
+  ctx.fillStyle='#8888aa';
+  const infoParts=[];
+  if(store.cuisine)infoParts.push(store.cuisine);
+  infoParts.push('人均 ¥'+fmt(store.avgPrice));
+  ctx.fillText(infoParts.join(' · '),70,670);
+
+  // Rating stars
+  const ratings=[
+    {label:'口味',val:Math.round(store.rating.taste)},
+    {label:'环境',val:Math.round(store.rating.environment)},
+    {label:'服务',val:Math.round(store.rating.service)},
+    {label:'性价比',val:Math.round(store.rating.value)},
+  ];
+  let y=720;
+  ratings.forEach(r=>{
+    ctx.font='28px "VT323", monospace';
+    ctx.fillStyle='#8888aa';
+    ctx.fillText(r.label,70,y);
+    let stars='';
+    for(let i=0;i<r.val;i++)stars+='◆ ';
+    for(let i=r.val;i<5;i++)stars+='◇ ';
+    ctx.fillStyle='#f5c518';
+    ctx.fillText(stars,160,y);
+    y+=50;
+  });
+
+  // Top dishes
+  if(topDishes.length>0){
+    y+=20;
+    ctx.fillStyle='#16213e';
+    ctx.fillRect(70,y,W-140,80);
+    ctx.strokeStyle='#f5c518';
+    ctx.lineWidth=3;
+    ctx.strokeRect(70,y,W-140,80);
+    ctx.font='26px "Press Start 2P", monospace';
+    ctx.fillStyle='#f5c518';
+    ctx.fillText('必点: '+topDishes.map(d=>d.name).join(' / '),90,y+52);
+    y+=120;
+  }
+
+  // Notes
+  if(store.notes){
+    ctx.font='28px "VT323", monospace';
+    ctx.fillStyle='#eaeaea';
+    ctx.fillText('「'+store.notes+'」',70,y+20);
+    y+=60;
+  }
+
+  // Bottom banner
+  y=H-180;
+  ctx.fillStyle='#e94560';
+  ctx.fillRect(70,y,W-140,80);
+  ctx.strokeStyle='#fff';
+  ctx.lineWidth=3;
+  ctx.strokeRect(70,y,W-140,80);
+  ctx.font='28px "Press Start 2P", monospace';
+  ctx.fillStyle='#fff';
+  ctx.textAlign='center';
+  ctx.fillText('PRESS START TO VISIT',W/2,y+52);
+
+  // Footer text
+  ctx.font='22px "VT323", monospace';
+  ctx.fillStyle='#8888aa';
+  ctx.fillText('行走的宝藏店 · 扫码查看',W/2,H-50);
+  ctx.textAlign='left';
+}
+
+// ========== APP STATE ==========
+const App={
+  filters:{status:'all',cuisine:'all',tag:'all'},
+  currentView:'index',
+  currentStoreId:null,
+  currentDishId:null,
+  currentVisitId:null,
+  searchQuery:'',
+};
+
+// ========== HASH ROUTER ==========
+const TAB_VIEWS=['index','wishlist','photo-wall','statistics','settings'];
+
+function parseHash(){
+  const raw=location.hash.slice(1)||'index';
+  // Parse query string if present
+  let q='';
+  let path=raw;
+  if(raw.includes('?')){
+    const parts=raw.split('?');
+    path=parts[0];
+    const params=new URLSearchParams(parts[1]);
+    q=params.get('q')||'';
+  }
+  const segments=path.split('/');
+  return{view:segments[0],params:segments.slice(1),query:q};
+}
+
+function navigate(view,...params){
+  let hash='#'+view;
+  if(params.length)hash+='/'+params.join('/');
+  if(App.searchQuery&&view==='search')hash+='?q='+encodeURIComponent(App.searchQuery);
+  location.hash=hash;
+}
+
+function resolveRoute(){
+  const{view,params,query}=parseHash();
+  App.currentView=view;
+  App.currentStoreId=params[0]||null;
+  App.currentDishId=params[1]||null;
+  App.currentVisitId=params[1]||null;
+  if(query)App.searchQuery=query;
+  else if(view!=='search')App.searchQuery='';
+
+  renderView();
+
+  // Update tab bar
+  const tab=TAB_VIEWS.includes(view)?view:null;
+  document.querySelectorAll('#tab-bar .tab-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.route===tab);
+  });
+
+  // Show/hide FAB
+  const fab=document.getElementById('fab-btn');
+  fab.style.display=(view==='index')?'flex':'none';
+}
+
+function renderView(){
+  const container=document.getElementById('view-container');
+  if(typeof V[App.currentView]==='function'){
+    container.innerHTML=V[App.currentView]();
+  }else{
+    container.innerHTML=V.index();
+  }
+  // Scroll to top
+  container.scrollTop=0;
+  window.scrollTo(0,0);
+}
+
+// ========== EVENT DELEGATION ==========
+document.addEventListener('click',async function(e){
+  const target=e.target.closest('[data-route]');
+  if(target){
+    e.preventDefault();
+    const route=target.dataset.route;
+    const segments=route.split('/');
+    navigate(segments[0],...segments.slice(1));
+    return;
+  }
+
+  // Back button
+  const backBtn=e.target.closest('[data-action="back"]');
+  if(backBtn){
+    e.preventDefault();
+    // Navigate to appropriate parent
+    if(TAB_VIEWS.includes(App.currentView)||App.currentView==='store-edit'||App.currentView==='dish-edit'||App.currentView==='visit-record'){
+      navigate('index');
+    }else if(App.currentView==='store-detail'){
+      navigate('index');
+    }else{
+      history.back();
+    }
+    if(!location.hash||location.hash==='#'){
+      navigate('index');
+    }
+    return;
+  }
+
+  // Store card click
+  const storeCard=e.target.closest('.store-card');
+  if(storeCard&&storeCard.dataset.route){
+    e.preventDefault();
+    const route=storeCard.dataset.route;
+    const segments=route.split('/');
+    navigate(segments[0],...segments.slice(1));
+    return;
+  }
+
+  // Tab bar
+  const tabBtn=e.target.closest('#tab-bar .tab-btn');
+  if(tabBtn){
+    e.preventDefault();
+    navigate(tabBtn.dataset.route);
+    return;
+  }
+
+  // FAB
+  if(e.target.closest('#fab-btn')){
+    navigate('store-edit');
+    return;
+  }
+
+  // Filter chips
+  const chip=e.target.closest('.tag-chip');
+  if(chip&&chip.dataset.filter){
+    const filterName=chip.dataset.filter;
+    const val=chip.dataset.val;
+    if(filterName==='status')App.filters.status=App.filters.status===val?'all':val;
+    else if(filterName==='cuisine')App.filters.cuisine=App.filters.cuisine===val?'all':val;
+    else if(filterName==='tag')App.filters.tag=App.filters.tag===val?'all':val;
+    renderView();
+    return;
+  }
+
+  // Star rating interaction
+  const starEl=e.target.closest('.star--interactive');
+  if(starEl){
+    const name=starEl.dataset.name;
+    const value=parseInt(starEl.dataset.value);
+    // Update hidden input
+    const inputId=name+'Val';
+    const hiddenInput=document.getElementById(inputId);
+    if(hiddenInput)hiddenInput.value=value;
+    // Update star display
+    const ratingEl=starEl.closest('.star-rating');
+    if(ratingEl){
+      ratingEl.querySelectorAll('.star').forEach((s,i)=>{
+        const filled=i<value;
+        s.classList.toggle('star--filled',filled);
+        s.classList.toggle('star--empty',!filled);
+        s.textContent=filled?'◆':'◇';
+      });
+    }
+    // Update hidden field by name
+    const namedInput=document.querySelector(`input[name="${name}"]`);
+    if(namedInput)namedInput.value=value;
+    return;
+  }
+
+  // Tag select
+  const tagChipEl=e.target.closest('[data-component="tag-select"] .tag-chip');
+  if(tagChipEl){
+    tagChipEl.classList.toggle('active');
+    return;
+  }
+
+  // Dish check
+  const dishCheck=e.target.closest('[data-component="dish-check"] .tag-chip');
+  if(dishCheck){
+    dishCheck.classList.toggle('active');
+    updateSelectedDishes();
+    return;
+  }
+
+  // Lightbox
+  const photoItem=e.target.closest('.photo-grid__item');
+  if(photoItem){
+    const idx=parseInt(photoItem.dataset.lightbox);
+    if(App._photoData&&App._photoData[idx]){
+      showLightbox(App._photoData[idx].src);
+    }
+    return;
+  }
+
+  // --- Actions ---
+  const actionTarget=e.target.closest('[data-action]');
+  if(!actionTarget)return;
+  const action=actionTarget.dataset.action;
+
+  if(action==='get-location'){
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(pos=>{
+        document.querySelector('input[name="lat"]').value=pos.coords.latitude.toFixed(6);
+        document.querySelector('input[name="lng"]').value=pos.coords.longitude.toFixed(6);
+        showToast('已获取位置','success');
+      },()=>showToast('获取位置失败，请手动输入','error'));
+    }else{
+      showToast('浏览器不支持定位','error');
+    }
+  }
+
+  if(action==='pick-cover'){
+    const imgs=await pickImages(false);
+    if(imgs.length){
+      document.getElementById('coverImageInput').value=imgs[0];
+      const preview=document.getElementById('coverPreview');
+      const previewNew=document.getElementById('coverPreviewNew');
+      if(preview)preview.style.display='none';
+      if(previewNew){previewNew.src=imgs[0];previewNew.style.display='block'}
+    }
+  }
+
+  if(action==='pick-photos'){
+    const imgs=await pickImages(true);
+    if(imgs.length){
+      const input=document.getElementById('dishPhotosInput');
+      let existing=[];
+      try{existing=JSON.parse(input.value)}catch{}
+      existing.push(...imgs);
+      input.value=JSON.stringify(existing);
+      const container=document.getElementById('dishPhotosPreview');
+      imgs.forEach(src=>{
+        const img=document.createElement('img');
+        img.src=src;img.className='preview-img';
+        container.appendChild(img);
+      });
+    }
+  }
+
+  if(action==='delete-store'){
+    const id=actionTarget.dataset.id;
+    const store=DB.getById('stores',id);
+    if(!store)return;
+    const dishCount=DB.getAll('dishes').filter(d=>d.storeId===id).length;
+    const visitCount=DB.getAll('visits').filter(v=>v.storeId===id).length;
+    showModal('确认删除',
+      `<p>确定要删除「${esc(store.name)}」吗？</p>
+       <p style="font-size:var(--fs-xs);color:var(--color-danger)">将同时删除 ${dishCount} 道菜品和 ${visitCount} 条探店记录</p>`,
+      ()=>{
+        deleteStoreCascade(id);
+        showToast('已删除','success');
+        navigate('index');
+      },'确认删除',true);
+  }
+
+  if(action==='delete-dish'){
+    const id=actionTarget.dataset.id;
+    const dish=DB.getById('dishes',id);
+    if(!dish)return;
+    showModal('确认删除',`<p>确定要删除「${esc(dish.name)}」吗？</p>`,
+      ()=>{DB.remove('dishes',id);showToast('已删除','success');renderView()},'确认删除',true);
+  }
+
+  if(action==='show-wishlist-form'){
+    const card=document.getElementById('wishlistFormCard');
+    if(card){
+      card.style.display=card.style.display==='none'?'block':'none';
+      card.scrollIntoView({behavior:'smooth'});
+    }
+  }
+
+  if(action==='delete-wishlist'){
+    const id=actionTarget.dataset.id;
+    const item=DB.getAll('wishlist').find(w=>w._id===id);
+    showModal('确认删除',`<p>确定要删除心愿「${esc(item?item.name:'')}」吗？</p>`,
+      ()=>{DB.remove('wishlist',id);showToast('已删除','success');renderView()},'确认删除',true);
+  }
+
+  if(action==='wishlist-to-store'){
+    const id=actionTarget.dataset.id;
+    const item=DB.getAll('wishlist').find(w=>w._id===id);
+    if(!item)return;
+    DB.add('stores',{
+      name:item.name,address:item.address,location:{lat:null,lng:null},
+      tags:[],cuisine:'',avgPrice:0,
+      rating:{taste:0,environment:0,service:0,value:0},
+      coverImage:'',status:'wishlist',visitCount:0,notes:item.reason||''
+    });
+    DB.remove('wishlist',id);
+    showToast('已转为店铺！','success');
+    renderView();
+  }
+
+  if(action==='set-theme'){
+    const theme=actionTarget.dataset.theme;
+    document.documentElement.setAttribute('data-theme',theme);
+    DB.saveSettings({theme});
+    // Re-render tab bar text
+    renderView();
+  }
+
+  if(action==='export-data'){
+    const data={
+      version:1,
+      exportedAt:nowISO(),
+      data:{
+        stores:DB.getAll('stores'),
+        dishes:DB.getAll('dishes'),
+        visits:DB.getAll('visits'),
+        wishlist:DB.getAll('wishlist'),
+      }
+    };
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='treasure-backup-'+today()+'.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('数据已导出','success');
+  }
+
+  if(action==='import-data'){
+    const input=document.getElementById('importInput');
+    input.value='';
+    input.onchange=async()=>{
+      const file=input.files[0];
+      if(!file)return;
+      try{
+        const text=await file.text();
+        const json=JSON.parse(text);
+        if(!json.data||!json.version){throw new Error('无效的备份文件')}
+        showModal('导入数据',
+          `<p>发现备份数据：</p>
+           <p style="font-size:var(--fs-xs)">
+             店铺 ${json.data.stores?.length||0} ·
+             菜品 ${json.data.dishes?.length||0} ·
+             记录 ${json.data.visits?.length||0} ·
+             心愿 ${json.data.wishlist?.length||0}
+           </p><p style="margin-top:8px">导入方式：</p>`,
+          ()=>{
+            // Merge data
+            ['stores','dishes','visits','wishlist'].forEach(coll=>{
+              if(json.data[coll])json.data[coll].forEach(item=>{
+                const existing=DB.getById(coll,item._id);
+                if(existing){DB.update(coll,item._id,item)}
+                else{DB.add(coll,item)}
+              });
+            });
+            showToast('数据已导入','success');
+            renderView();
+          },'合并导入');
+      }catch(err){
+        showToast('导入失败：文件格式错误','error');
+      }
+    };
+    input.click();
+  }
+
+  if(action==='compress-all'){
+    showModal('压缩图片',
+      `<p>将把所有图片压缩到更小尺寸（300px宽，低质量），以节省存储空间。</p><p style="font-size:var(--fs-xs);color:var(--color-text-dim)">建议先导出数据备份。</p>`,
+      ()=>{
+        const count=compressAllPhotos();
+        showToast(`压缩完成','success`);
+        renderView();
+      },'开始压缩');
+  }
+
+  if(action==='clear-all-data'){
+    showModal('⚠️ 清除所有数据',
+      `<p style="color:var(--color-danger)">此操作将删除所有店铺、菜品、探店记录、心愿单数据！</p><p style="margin-top:8px">建议先导出备份。</p>`,
+      ()=>{
+        Object.values(STORAGE_KEYS).forEach(k=>localStorage.removeItem(k));
+        seedData();
+        showToast('数据已清除并重置','info');
+        renderView();
+      },'确认清除',true);
+  }
+
+  if(action==='open-map'){
+    const lat=parseFloat(actionTarget.dataset.lat);
+    const lng=parseFloat(actionTarget.dataset.lng);
+    const name=actionTarget.dataset.name;
+    if(isNaN(lat)||isNaN(lng)){showToast('无效的坐标','error');return}
+    const ua=navigator.userAgent;
+    let url;
+    if(/MicroMessenger/i.test(ua)){
+      url=`https://apis.map.qq.com/uri/v1/marker?marker=coord:${lat},${lng};title:${encodeURIComponent(name)}`;
+    }else if(/iPhone|iPad|iPod/i.test(ua)){
+      url=`https://maps.apple.com/?q=${encodeURIComponent(name)}&ll=${lat},${lng}`;
+    }else{
+      url=`https://www.google.com/maps?q=${lat},${lng}`;
+    }
+    window.open(url,'_blank');
+  }
+
+  if(action==='save-share'){
+    const canvas=document.getElementById('shareCanvas');
+    if(!canvas)return;
+    const dataUrl=canvas.toDataURL('image/jpeg',0.9);
+    const a=document.createElement('a');
+    a.href=dataUrl;a.download='treasure-'+App._shareStore.name+'.jpg';
+    a.click();
+    showToast('图片已保存','success');
+  }
+
+  if(action==='web-share'){
+    const canvas=document.getElementById('shareCanvas');
+    if(!canvas||!navigator.share)return;
+    canvas.toBlob(async(blob)=>{
+      const file=new File([blob],'treasure-share.jpg',{type:'image/jpeg'});
+      try{
+        await navigator.share({files:[file],title:App._shareStore.name,text:'我发现了一家宝藏店！'});
+      }catch{}
+    },'image/jpeg',0.9);
+  }
+});
+
+// ========== FORM HANDLING ==========
+document.addEventListener('submit',function(e){
+  const form=e.target.closest('form');
+  if(!form||!form.dataset.form)return;
+  e.preventDefault();
+
+  const formType=form.dataset.form;
+
+  if(formType==='store-edit'){
+    const isEdit=form.dataset.edit;
+    const fd={};
+    form.querySelectorAll('input[name],select[name],textarea[name]').forEach(el=>{
+      fd[el.name]=el.value;
+    });
+    // Collect tags
+    const tagEls=form.querySelectorAll('[data-component="tag-select"] .tag-chip.active');
+    fd.tags=Array.from(tagEls).map(t=>t.dataset.chip);
+
+    const storeData={
+      name:fd.name,address:fd.address||'',
+      location:{lat:parseFloat(fd.lat)||null,lng:parseFloat(fd.lng)||null},
+      tags:fd.tags,cuisine:fd.cuisine||'其他',
+      avgPrice:parseFloat(fd.avgPrice)||0,
+      rating:{taste:0,environment:0,service:0,value:0},
+      coverImage:fd.coverImage||'',status:fd.status||'visited',
+      visitCount:isEdit?undefined:0,notes:fd.notes||''
+    };
+    if(!storeData.name){showToast('请输入店名','error');return}
+
+    if(isEdit){
+      const existing=DB.getById('stores',isEdit);
+      const patch={...storeData,visitCount:existing.visitCount,rating:existing.rating};
+      DB.update('stores',isEdit,patch);
+      showToast('店铺已更新','success');
+    }else{
+      DB.add('stores',storeData);
+      showToast('宝藏店已添加！','success');
+    }
+    navigate('index');
+  }
+
+  if(formType==='dish-edit'){
+    const storeId=form.dataset.store;
+    const isEdit=form.dataset.edit;
+    const fd={};
+    form.querySelectorAll('input[name],select[name],textarea[name]').forEach(el=>{fd[el.name]=el.value});
+    const tagEls=form.querySelectorAll('[data-component="tag-select"] .tag-chip.active');
+    fd.tags=Array.from(tagEls).map(t=>t.dataset.chip);
+    let photos=[];
+    try{photos=JSON.parse(fd.photos||'[]')}catch{}
+
+    const dishData={
+      storeId,name:fd.name,price:parseFloat(fd.price)||0,
+      photos,category:fd.category||'其他',
+      rating:parseInt(fd.rating)||3,tags:fd.tags,notes:fd.notes||''
+    };
+    if(!dishData.name){showToast('请输入菜品名称','error');return}
+    if(!dishData.price){showToast('请输入价格','error');return}
+
+    if(isEdit){
+      DB.update('dishes',isEdit,dishData);
+      showToast('菜品已更新','success');
+    }else{
+      DB.add('dishes',dishData);
+      showToast('菜品已添加','success');
+    }
+    navigate('store-detail',storeId);
+  }
+
+  if(formType==='visit-record'){
+    const storeId=form.dataset.store;
+    const isEdit=form.dataset.edit;
+    const fd={};
+    form.querySelectorAll('input[name],select[name],textarea[name]').forEach(el=>{fd[el.name]=el.value});
+    let dishes=[];
+    try{dishes=JSON.parse(fd.selectedDishes||'[]')}catch{}
+
+    // Calculate total cost from selected dishes
+    const autoTotal=dishes.reduce((s,d)=>s+(Number(d.price)||0),0);
+
+    const visitData={
+      storeId,storeName:DB.getById('stores',storeId)?.name||'',
+      date:fd.date||today(),
+      dishes,
+      totalCost:parseFloat(fd.totalCost)||autoTotal||0,
+      personCount:parseInt(fd.personCount)||1,
+      rating:{
+        taste:parseInt(fd.taste)||3,
+        environment:parseInt(fd.environment)||3,
+        service:parseInt(fd.service)||3,
+        value:parseInt(fd.value)||3
+      },
+      notes:fd.notes||'',
+      photos:[]
+    };
+    if(!visitData.date){showToast('请选择日期','error');return}
+
+    if(isEdit){
+      DB.update('visits',isEdit,visitData);
+      showToast('探店记录已更新','success');
+    }else{
+      DB.add('visits',visitData);
+      // Increment visit count
+      const store=DB.getById('stores',storeId);
+      if(store){
+        DB.update('stores',storeId,{visitCount:(store.visitCount||0)+1,status:'visited'});
+      }
+      showToast('探店记录已添加！','success');
+    }
+    navigate('store-detail',storeId);
+  }
+
+  if(formType==='wishlist-add'){
+    const fd={};
+    form.querySelectorAll('input[name],select[name],textarea[name]').forEach(el=>{fd[el.name]=el.value});
+    if(!fd.name){showToast('请输入店名','error');return}
+    DB.add('wishlist',{name:fd.name,address:fd.address||'',reason:fd.reason||'',source:fd.source||''});
+    showToast('已添加到心愿单','success');
+    renderView();
+  }
+});
+
+// Search input (live)
+let searchTimeout;
+document.addEventListener('input',function(e){
+  if(e.target.id==='searchInput'){
+    clearTimeout(searchTimeout);
+    searchTimeout=setTimeout(()=>{
+      App.searchQuery=e.target.value;
+      navigate('search');
+    },400);
+  }
+});
+
+// Update selected dishes helper
+function updateSelectedDishes(){
+  const chips=document.querySelectorAll('[data-component="dish-check"] .tag-chip.active');
+  const dishes=Array.from(chips).map(c=>({
+    dishId:c.dataset.dishId,
+    name:c.dataset.dishName,
+    price:parseFloat(c.dataset.dishPrice)||0
+  }));
+  const input=document.getElementById('selectedDishesInput');
+  if(input)input.value=JSON.stringify(dishes);
+  // Auto-update total cost
+  const costInput=document.querySelector('input[name="totalCost"]');
+  if(costInput){
+    const total=dishes.reduce((s,d)=>s+d.price,0);
+    costInput.value=total||'';
+  }
+}
+
+// ========== BOOTSTRAP ==========
+function init(){
+  seedData();
+  window.addEventListener('hashchange',resolveRoute);
+  // Popstate for back button
+  window.addEventListener('popstate',()=>{
+    if(!location.hash){navigate('index')}
+  });
+  resolveRoute();
+
+  // Load theme
+  const settings=DB.getSettings();
+  document.documentElement.setAttribute('data-theme',settings.theme||'pixel');
+
+  console.log('%c🕹️ 行走的宝藏店 %cv1.0',
+    'font-family:"Press Start 2P",monospace;font-size:16px;color:#f5c518;',
+    'color:#e94560;');
+  console.log('%cPRESS START TO CONTINUE','color:#8888aa;');
+}
+
+init();
+</script>
+</body>
+</html>
