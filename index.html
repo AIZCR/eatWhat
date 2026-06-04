@@ -98,10 +98,13 @@ img{max-width:100%}
 .form-textarea{resize:vertical;min-height:72px;line-height:1.6}
 
 /* PRICE */
-.price-display{text-align:center;font-size:2.6rem;font-weight:900;color:#FF6B35;padding:4px 0 2px;font-variant-numeric:tabular-nums}
+.price-display{text-align:center;font-size:2.6rem;font-weight:900;color:#FF6B35;padding:4px 0 2px;font-variant-numeric:tabular-nums;display:inline-block}
 .price-display::before{content:'¥';font-size:1.6rem;vertical-align:top;margin-right:2px}
+.price-display.pop{animation:pricePop 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes pricePop{0%{transform:scale(1)}30%{transform:scale(1.15)}60%{transform:scale(0.92)}100%{transform:scale(1)}}
 input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(to right,#FF6B35,#FF8C42);outline:none;margin:6px 0;touch-action:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:36px;height:36px;border-radius:50%;background:#fff;border:3px solid #FF6B35;box-shadow:0 2px 8px rgba(255,107,53,0.25);cursor:pointer}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.15)}
 .price-labels{display:flex;justify-content:space-between;font-size:0.68rem;color:#C4B5AA;margin-top:2px}
 
 /* IMAGE PICKER */
@@ -236,35 +239,53 @@ function pickPhoto(){
   });
 }
 
-// Open external map to pick a place
+// Open native map app (Amap/Gaode, Baidu, Apple Maps, Google Maps)
 function openMapForPick(){
   const ua=navigator.userAgent;
-  let url;
-  if(/MicroMessenger/i.test(ua)){
-    // WeChat: open Tencent map picker
-    url='https://apis.map.qq.com/uri/v1/search?keyword=餐厅&referer=EatWhat';
-  }else if(/iPhone|iPad|iPod/i.test(ua)){
-    url='https://maps.apple.com/search?q=餐厅';
-  }else{
-    url='https://www.google.com/maps/search/?api=1&query=餐厅';
-  }
-  // Also try getting current position and open nearby
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(pos=>{
-      let nearbyUrl;
-      if(/MicroMessenger/i.test(ua)){
-        nearbyUrl=`https://apis.map.qq.com/uri/v1/search?keyword=餐厅&center=${pos.coords.latitude},${pos.coords.longitude}&radius=3000&referer=EatWhat`;
-      }else if(/iPhone|iPad|iPod/i.test(ua)){
-        nearbyUrl=`https://maps.apple.com/?q=餐厅&ll=${pos.coords.latitude},${pos.coords.longitude}`;
-      }else{
-        nearbyUrl=`https://www.google.com/maps/search/餐厅/@${pos.coords.latitude},${pos.coords.longitude},15z`;
-      }
-      window.open(nearbyUrl,'_blank');
-    },()=>{window.open(url,'_blank')},{timeout:5000});
-  }else{
+  const isIOS=/iPhone|iPad|iPod/i.test(ua);
+  const isAndroid=/Android/i.test(ua);
+  const isWeChat=/MicroMessenger/i.test(ua);
+
+  // Build a geo: URI that triggers native map apps
+  let fallbackUrl='';
+
+  // Try to get current position for nearby search
+  const tryNearby=(lat,lng)=>{
+    let url='';
+    const locStr=`${lat},${lng}`;
+
+    if(isWeChat){
+      // WeChat: use Tencent map URI (opens native WeChat map or user's default)
+      url=`https://apis.map.qq.com/uri/v1/search?keyword=餐厅&center=${locStr}&radius=3000&referer=EatWhat`;
+    }else if(isIOS){
+      // iOS: Apple Maps search nearby restaurants
+      url=`https://maps.apple.com/?q=餐厅&ll=${locStr}`;
+    }else if(isAndroid){
+      // Android: use geo intent with label, then google maps fallback
+      // First try geo URI — many Android devices will offer Amap/Baidu/Google as options
+      url=`https://www.google.com/maps/search/餐厅/@${locStr},15z`;
+    }else{
+      url=`https://www.google.com/maps/search/?api=1&query=餐厅`;
+    }
     window.open(url,'_blank');
+  };
+
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos=>{tryNearby(pos.coords.latitude,pos.coords.longitude)},
+      ()=>{
+        // Fallback: open generic map search
+        if(isWeChat)window.open('https://apis.map.qq.com/uri/v1/search?keyword=餐厅&referer=EatWhat','_blank');
+        else if(isIOS)window.open('https://maps.apple.com/?q=餐厅','_blank');
+        else window.open('https://www.google.com/maps/search/?api=1&query=餐厅','_blank');
+      },
+      {timeout:5000,enableHighAccuracy:false}
+    );
+  }else{
+    if(isIOS)window.open('https://maps.apple.com/?q=餐厅','_blank');
+    else window.open('https://www.google.com/maps/search/?api=1&query=餐厅','_blank');
   }
-  toast('在地图中选择店铺后，复制地址粘贴回来','info');
+  toast('在地图App中选择店铺后，回来粘贴地址','info');
 }
 
 function getCuisineList(){const s=new Set(loadFoods().map(f=>f.cuisine).filter(Boolean));return['全部',...Array.from(s).sort()]}
@@ -332,7 +353,7 @@ function makeFoodForm(food){
     ${photoHtml}<input type="hidden" name="photo" value="${food&&food.photo?food.photo:''}" id="photoField">
     <div class="form-group"><label class="form-label">🍜 美食名称</label><input class="form-input" name="name" value="${food?esc(food.name):''}" placeholder="比如：招牌豚骨拉面" required></div>
     <div class="form-group"><label class="form-label">🏪 店名</label><input class="form-input" name="storeName" value="${food?esc(food.storeName||''):''}" placeholder="在哪家店吃的？" list="ss"><datalist id="ss"></datalist></div>
-    <div class="form-group"><label class="form-label">📍 地址</label><input class="form-input" name="address" value="${food?esc(food.address||''):''}" placeholder="手动输入，或点击下方按钮在地图中选择"><div class="map-hint" style="cursor:pointer" data-action="pick-map">在地图中选择店铺</div><div style="font-size:0.7rem;color:#C4B5AA;margin-top:4px">打开地图后找到店铺 → 复制地址 → 粘贴到上方输入框</div></div>
+    <div class="form-group"><label class="form-label">📍 地址</label><input class="form-input" name="address" value="${food?esc(food.address||''):''}" placeholder="输入地址，或点击下方打开地图搜索"><div class="map-hint" style="cursor:pointer" data-action="pick-map">🗺️ 打开地图搜索附近店铺</div><div style="font-size:0.7rem;color:#C4B5AA;margin-top:4px">地图中找到店铺后，复制地址粘贴回上方</div></div>
     <div class="form-group"><label class="form-label">💰 价格</label><div class="price-display" id="priceDisplay">${food?food.price||'0':''}</div><input type="range" name="price" min="0" max="${Math.max(100,Math.ceil(((food?.price||0)+50)/100)*100)}" step="1" value="${food?food.price||'0':'0'}" id="priceSlider"><div class="price-labels" id="priceLabels"></div></div>
     <div class="form-group"><label class="form-label">🍳 菜系</label><div class="chips-row" id="cf2">${cuisines.map(c=>`<span class="chip${food&&food.cuisine===c?' active':''}" data-select="cuisine" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="cuisine" data-val="__new__">＋</span></div><div id="ncg" style="display:none;margin-top:6px"><input class="form-input" name="newCuisine" placeholder="新菜系名称"></div></div>
     <div class="form-group"><label class="form-label">🍽️ 类型</label><div class="chips-row" id="tf2">${types.map(c=>`<span class="chip${food&&food.foodType===c?' active':''}" data-select="type" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="type" data-val="__new__">＋</span></div><div id="ntg" style="display:none;margin-top:6px"><input class="form-input" name="newFoodType" placeholder="新类型名称"></div></div>
@@ -411,15 +432,21 @@ document.addEventListener('click',function(e){
   if(mp){openMapForPick();return}
 });
 
-// ========== INPUT EVENT — price slider real-time ==========
+// ========== INPUT EVENT — price slider real-time with pop animation ==========
 document.addEventListener('input',function(e){
   if(e.target.id==='priceSlider'){
     const slider=e.target;const v=parseInt(slider.value);
     const display=document.getElementById('priceDisplay');
-    if(display)display.textContent=v;
-    // Auto-extend when near max
+    if(display){
+      // Trigger pop animation on every change
+      display.textContent=v;
+      display.classList.remove('pop');
+      void display.offsetWidth; // force reflow
+      display.classList.add('pop');
+    }
+    // Auto-extend range when near max
     const max=parseInt(slider.max);
-    if(v>=max-5&&max<2000){slider.max=max+100;updatePriceLabels(slider)}
+    if(v>=max-3&&max<2000){slider.max=max+100;updatePriceLabels(slider)}
     if(v<max-60&&max>100){const newMax=Math.max(100,max-100);if(newMax>=v+20){slider.max=newMax;updatePriceLabels(slider)}}
   }
 });
