@@ -102,7 +102,8 @@ img{max-width:100%}
 .price-display::before{content:'¥';font-size:1.6rem;vertical-align:top;margin-right:4px}
 .price-display.pop{animation:pricePop 0.35s cubic-bezier(0.34,1.56,0.64,1)}
 @keyframes pricePop{0%{transform:scale(1)}40%{transform:scale(1.2)}65%{transform:scale(0.9)}100%{transform:scale(1)}}
-input[type=range]{-webkit-appearance:none;width:100%;height:10px;border-radius:5px;background:linear-gradient(to right,#FF6B35,#FF8C42);outline:none;margin:10px 0;touch-action:none;cursor:pointer;transition:opacity 0.1s}
+input[type=range]{-webkit-appearance:none;width:100%;height:10px;border-radius:5px;background:linear-gradient(to right,#FF6B35,#FF8C42);outline:none;margin:10px 0;touch-action:none;cursor:pointer;transition:opacity 0.15s}
+input[type=range]:disabled{opacity:0.35;cursor:not-allowed}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:40px;height:40px;border-radius:50%;background:#fff;border:3px solid #FF6B35;box-shadow:0 3px 12px rgba(255,107,53,0.3);cursor:pointer;transition:transform 0.12s ease-out,box-shadow 0.12s ease-out}
 input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);box-shadow:0 4px 20px rgba(255,107,53,0.45)}
 .price-labels{display:flex;justify-content:space-between;font-size:0.68rem;color:#C4B5AA;margin-top:2px;padding:0 2px}
@@ -375,7 +376,7 @@ function makeFoodForm(food){
     <div class="form-group"><label class="form-label">🍜 美食名称</label><input class="form-input" name="name" value="${food?esc(food.name):''}" placeholder="比如：招牌豚骨拉面" required></div>
     <div class="form-group"><label class="form-label">🏪 店名</label><input class="form-input" name="storeName" value="${food?esc(food.storeName||''):''}" placeholder="在哪家店吃的？" list="ss"><datalist id="ss"></datalist></div>
     <div class="form-group"><label class="form-label">📍 地址</label><input class="form-input" name="address" value="${food?esc(food.address||''):''}" placeholder="输入地址，或点击下方打开高德地图选择"><div class="map-hint" data-action="pick-map">🗺️ 打开高德地图选择店铺</div><div style="font-size:0.7rem;color:#C4B5AA;margin-top:6px">高德中找到店铺 → 复制地址 → 粘贴回上方输入框</div></div>
-    <div class="form-group"><label class="form-label">💰 价格</label><div class="price-display" id="priceDisplay">${food?food.price||'0':''}</div><input type="range" name="price" min="0" max="${Math.max(100,Math.ceil(((food?.price||0)+50)/100)*100)}" step="1" value="${food?food.price||'0':'0'}" id="priceSlider"><div class="price-labels" id="priceLabels"></div></div>
+    <div class="form-group"><label class="form-label">💰 价格</label><div class="price-display" id="priceDisplay">${food?food.price||'0':''}</div><input type="range" min="0" max="100" step="1" value="0" id="priceSlider" data-price="${food?food.price||'0':'0'}" data-max="${Math.max(100,Math.ceil(((food?.price||0)+50)/100)*100)}"><input type="hidden" name="price" id="priceHidden" value="${food?food.price||'0':'0'}"><div class="price-labels" id="priceLabels"></div></div>
     <div class="form-group"><label class="form-label">🍳 菜系</label><div class="chips-row" id="cf2">${cuisines.map(c=>`<span class="chip${food&&food.cuisine===c?' active':''}" data-select="cuisine" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="cuisine" data-val="__new__">＋</span></div><div id="ncg" style="display:none;margin-top:6px"><input class="form-input" name="newCuisine" placeholder="新菜系名称"></div></div>
     <div class="form-group"><label class="form-label">🍽️ 类型</label><div class="chips-row" id="tf2">${types.map(c=>`<span class="chip${food&&food.foodType===c?' active':''}" data-select="type" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="type" data-val="__new__">＋</span></div><div id="ntg" style="display:none;margin-top:6px"><input class="form-input" name="newFoodType" placeholder="新类型名称"></div></div>
     <div class="form-group"><label class="form-label">⭐ 评价</label><div class="chips-row" id="rc2">${RATING_TAGS.map(t=>`<span class="chip${food&&food.ratingTag===t?' active':''}" data-rating="${esc(t)}">${esc(t)}</span>`).join('')}</div></div>
@@ -406,9 +407,14 @@ function updateStoreSuggestions(){
 
 // ========== PRICE LABELS ==========
 function updatePriceLabels(slider){
-  const max=parseInt(slider.max),step=Math.round(max/5);
+  const dataMax=parseInt(slider.dataset.max)||100;
+  // 0 → 50% of slider covers 0..dataMax-100, 50%→100% covers last ¥100
   const labels=document.getElementById('priceLabels');
-  if(labels)labels.innerHTML=Array.from({length:6},(_,i)=>`<span>¥${Math.round(i*step)}</span>`).join('');
+  if(labels){
+    const pts=[0,0.25,0.5,0.625,0.75,0.875,1];
+    const vals=pts.map(p=>Math.round(posToPrice(p*100,dataMax)));
+    labels.innerHTML=vals.map(v=>`<span>¥${v}</span>`).join('');
+  }
 }
 
 // ========== CLICK EVENTS ==========
@@ -453,27 +459,80 @@ document.addEventListener('click',function(e){
   if(mp){openMapForPick();return}
 });
 
-// ========== INPUT EVENT — smooth price slider ==========
+// ========== PRICE SLIDER — non-linear mapping ==========
+// Slider position 0..100 always. Actual price maps:
+//   0%..50%   → 0 .. (dataMax - 100)
+//   50%..100% → (dataMax - 100) .. dataMax
+// The last ¥100 always occupies half the slider width (high precision).
+
+function posToPrice(pos,dataMax){
+  if(dataMax<=100)return pos/100*dataMax;
+  const half=dataMax-100;
+  if(pos<=50)return pos/50*half;
+  return half+(pos-50)/50*100;
+}
+function priceToPos(price,dataMax){
+  if(dataMax<=100)return price/dataMax*100;
+  const half=dataMax-100;
+  if(price<=half)return price/half*50;
+  return 50+(price-half)/100*50;
+}
+
+let _priceLockTimer=null;
 document.addEventListener('input',function(e){
   if(e.target.id==='priceSlider'){
-    const slider=e.target;const v=parseInt(slider.value);
+    const slider=e.target;
+    const pos=parseInt(slider.value);
     const display=document.getElementById('priceDisplay');
+    const hidden=document.getElementById('priceHidden');
+    let dataMax=parseInt(slider.dataset.max)||100;
+    const price=Math.round(posToPrice(pos,dataMax));
+
+    // Update display + hidden input
     if(display){
-      display.textContent=v;
+      display.textContent=price;
       display.classList.remove('pop');
       void display.offsetWidth;
       display.classList.add('pop');
     }
-    // Auto-extend range when dragging near max
-    const max=parseInt(slider.max);
-    // Expand only when slider is pulled to the very top
-    if(v===max&&max<2000){const newMax=max+100;slider.max=newMax;updatePriceLabels(slider)}
-    // Shrink back when value is far below max
-    if(v<max-80&&max>120){const newMax=Math.max(100,max-100);slider.max=newMax;updatePriceLabels(slider)}
+    if(hidden)hidden.value=price;
+
+    // === Expand: only at absolute top (pos===100) ===
+    if(pos===100&&dataMax<1000&&!_priceLockTimer){
+      const newMax=dataMax+100;
+      slider.dataset.max=newMax;
+      // Lock slider so user can't fight the snap
+      slider.disabled=true;
+      _priceLockTimer=setTimeout(()=>{
+        slider.disabled=false;
+        // Snap into the high-precision ¥100 zone: pos=90
+        slider.value=90;
+        const p2=Math.round(posToPrice(90,newMax));
+        if(display)display.textContent=p2;
+        if(hidden)hidden.value=p2;
+        slider.dataset.price=p2;
+        updatePriceLabels(slider);
+        _priceLockTimer=null;
+      },350);
+      updatePriceLabels(slider);
+      return;
+    }
+
+    slider.dataset.price=price;
+    updatePriceLabels(slider);
   }
 });
 
-function initP(){const p=document.getElementById('photoField').value;if(p){const pr=document.getElementById('fp');pr.style.display='block';pr.src=p;const pk=document.querySelector('.img-picker');if(pk)pk.style.display='none'}}
+function initP(){const p=document.getElementById('photoField').value;if(p){const pr=document.getElementById('fp');pr.style.display='block';pr.src=p;const pk=document.querySelector('.img-picker');if(pk)pk.style.display='none'}
+  // Set slider position to match the existing price
+  const slider=document.getElementById('priceSlider');
+  if(slider){
+    const price=parseFloat(slider.dataset.price)||0;
+    const dataMax=parseInt(slider.dataset.max)||100;
+    slider.value=Math.round(priceToPos(price,dataMax));
+    updatePriceLabels(slider);
+  }
+}
 
 // ========== FORM SUBMIT ==========
 document.addEventListener('submit',function(e){
