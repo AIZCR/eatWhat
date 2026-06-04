@@ -7,64 +7,24 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>EatWhat</title>
 <style>
-/* ===== CSS Reset ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;-webkit-text-size-adjust:100%}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
-  background:#FFF5EE;
-  color:#4A3028;
-  min-height:100dvh;line-height:1.5;
-  background-image:
-    radial-gradient(circle at 20% 80%,rgba(255,171,145,0.15) 0,transparent 50%),
-    radial-gradient(circle at 80% 20%,rgba(255,213,128,0.12) 0,transparent 50%),
-    radial-gradient(circle at 50% 50%,rgba(200,230,201,0.1) 0,transparent 50%);
-  position:relative;
-}
-a{color:inherit;text-decoration:none}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#FFF5EE;color:#4A3028;min-height:100dvh;line-height:1.5;background-image:radial-gradient(circle at 20% 80%,rgba(255,171,145,0.15) 0,transparent 50%),radial-gradient(circle at 80% 20%,rgba(255,213,128,0.12) 0,transparent 50%),radial-gradient(circle at 50% 50%,rgba(200,230,201,0.1) 0,transparent 50%);position:relative}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-input,select,textarea{font-family:inherit;outline:none;border:none}
+input,textarea{font-family:inherit;outline:none;border:none;font-size:16px;color:#4A3028}
 img{max-width:100%}
-input,select,textarea{font-size:16px;color:#4A3028}
 
-/* ===== Container ===== */
+/* ===== CONTAINER ===== */
 .container{max-width:640px;margin:0 auto;padding:0 16px 120px}
 
 /* ===== HEADER ===== */
-.header{
-  text-align:center;padding:28px 0 20px;
-  background:linear-gradient(135deg,#FFF0E5,#FFE8D6);
-  margin:0 -16px;padding-left:16px;padding-right:16px;
-  border-radius:0 0 32px 32px;
-  box-shadow:0 4px 20px rgba(74,48,40,0.06);
-  position:relative;overflow:hidden;
-}
-/* Decorative food icons in header bg */
-.header::before{
-  content:'🍜 🍕 🍔 🍣 🍰 🍩 🥐 🥗 🌮 🍝 🍛 🍙 🥟 🍗 🧁';
-  position:absolute;inset:0;opacity:0.12;font-size:28px;
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
-  gap:8px;padding:10px;letter-spacing:6px;
-  pointer-events:none;z-index:0;
-}
+.header{text-align:center;padding:28px 0 20px;background:linear-gradient(135deg,#FFF0E5,#FFE8D6);margin:0 -16px;padding-left:16px;padding-right:16px;border-radius:0 0 32px 32px;box-shadow:0 4px 20px rgba(74,48,40,0.06);position:relative;overflow:hidden}
+.header::before{content:'🍜 🍕 🍔 🍣 🍰 🍩 🥐 🥗 🌮 🍝 🍛 🍙 🥟 🍗 🧁';position:absolute;inset:0;opacity:0.12;font-size:28px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:10px;letter-spacing:6px;pointer-events:none;z-index:0}
 .header__content{position:relative;z-index:1}
-.header__brand{
-  font-size:2.2rem;font-weight:900;letter-spacing:-1px;
-  background:linear-gradient(135deg,#FF6B35,#FF8C42);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-.header__time{
-  font-size:0.9rem;color:#B8A59A;margin-top:6px;
-  font-variant-numeric:tabular-nums;font-family:'SF Mono','Fira Code',monospace;
-}
-.header__stats{
-  display:flex;justify-content:center;gap:24px;margin-top:14px;flex-wrap:wrap;
-}
-.header__stat{
-  background:white;border-radius:20px;padding:8px 18px;box-shadow:0 2px 8px rgba(0,0,0,0.04);
-  font-size:0.85rem;font-weight:600;
-}
+.header__brand{font-size:2.2rem;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,#FF6B35,#FF8C42);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header__time{font-size:0.9rem;color:#B8A59A;margin-top:6px;font-variant-numeric:tabular-nums;font-family:'SF Mono','Fira Code',monospace}
+.header__stats{display:flex;justify-content:center;gap:24px;margin-top:14px;flex-wrap:wrap}
+.header__stat{background:white;border-radius:20px;padding:8px 18px;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-size:0.85rem;font-weight:600}
 .header__stat em{font-style:normal;color:#FF6B35;font-weight:700}
 
 /* ===== FILTER CHIPS ===== */
@@ -72,47 +32,30 @@ input,select,textarea{font-size:16px;color:#4A3028}
 .chips-title{font-size:0.8rem;color:#B8A59A;margin-bottom:8px;font-weight:600;letter-spacing:0.5px}
 .chips-row{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:wrap}
 .chips-row::-webkit-scrollbar{display:none}
-.chip{
-  display:inline-flex;align-items:center;gap:4px;padding:8px 14px;
-  font-size:0.85rem;background:#fff;color:#8B7E74;border:1.5px solid #E8DDD5;
-  border-radius:20px;cursor:pointer;white-space:nowrap;transition:all 0.15s;
-  user-select:none;-webkit-tap-highlight-color:transparent;font-weight:500;
-}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:8px 14px;font-size:0.85rem;background:#fff;color:#8B7E74;border:1.5px solid #E8DDD5;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all 0.15s;user-select:none;-webkit-tap-highlight-color:transparent;font-weight:500}
 .chip:active{transform:scale(0.96)}
 .chip.active{background:#FF6B35;color:#fff;border-color:#FF6B35;box-shadow:0 2px 8px rgba(255,107,53,0.25)}
 .chip--new{border-style:dashed;border-color:#FF6B35;color:#FF6B35}
 
-/* ===== FOOD CARD ===== */
-.food-card{
-  background:#fff;border-radius:20px;overflow:hidden;
-  box-shadow:0 2px 16px rgba(0,0,0,0.05);margin-bottom:14px;
-  transition:transform 0.15s;
-}
-.food-card:active{transform:scale(0.985)}
-.food-card__img{
-  width:100%;aspect-ratio:16/10;object-fit:cover;background:#FFF0E5;
-}
-.food-card__img--placeholder{
-  display:flex;align-items:center;justify-content:center;
-  font-size:4rem;background:linear-gradient(135deg,#FFF0E5,#FFE8D6);
-}
-.food-card__body{padding:14px 16px 16px}
-.food-card__header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.food-card__name{font-size:1.15rem;font-weight:700;color:#4A3028;line-height:1.3}
-.food-card__price{font-size:1.1rem;font-weight:800;color:#FF6B35;white-space:nowrap;margin-left:8px}
-.food-card__store{font-size:0.85rem;color:#8B7E74;margin-bottom:6px}
-.food-card__store::before{content:'📍 '}
-.food-card__meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
-.food-card__notes{font-size:0.9rem;color:#6B5E54;line-height:1.5;margin-top:6px;font-style:italic}
-.food-card__footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid #F5EDE8}
-.food-card__time{font-size:0.75rem;color:#C4B5AA}
-.food-card__actions{display:flex;gap:8px}
+/* ===== CARD ===== */
+.card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.05);margin-bottom:14px;transition:transform 0.15s}
+.card:active{transform:scale(0.985)}
+.card__img{width:100%;aspect-ratio:16/10;object-fit:cover;background:#FFF0E5}
+.card__img--placeholder{display:flex;align-items:center;justify-content:center;font-size:4rem;background:linear-gradient(135deg,#FFF0E5,#FFE8D6)}
+.card__body{padding:14px 16px 16px}
+.card__header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.card__title{font-size:1.15rem;font-weight:700;color:#4A3028;line-height:1.3}
+.card__price{font-size:1.1rem;font-weight:800;color:#FF6B35;white-space:nowrap;margin-left:8px}
+.card__addr{font-size:0.85rem;color:#8B7E74;margin-bottom:4px}
+.card__addr::before{content:'📍 '}
+.card__meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.card__notes{font-size:0.9rem;color:#6B5E54;line-height:1.5;margin-top:6px;font-style:italic}
+.card__footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid #F5EDE8}
+.card__time{font-size:0.75rem;color:#C4B5AA}
+.card__actions{display:flex;gap:8px}
 
 /* ===== TAGS ===== */
-.tag{
-  display:inline-block;padding:3px 10px;font-size:0.75rem;font-weight:600;
-  border-radius:12px;letter-spacing:0.3px;
-}
+.tag{display:inline-block;padding:3px 10px;font-size:0.75rem;font-weight:600;border-radius:12px;letter-spacing:0.3px}
 .tag--cuisine{background:#FFF0E5;color:#FF8C42}
 .tag--type{background:#E8F5E9;color:#4CAF50}
 .tag--rating{background:#FFF9E6;color:#F5A623}
@@ -121,151 +64,94 @@ input,select,textarea{font-size:16px;color:#4A3028}
 .tag--bad{background:#F5F5F5;color:#9E9E9E}
 
 /* ===== BUTTONS ===== */
-.btn{
-  display:inline-flex;align-items:center;gap:4px;padding:8px 16px;
-  border-radius:16px;font-size:0.8rem;font-weight:600;cursor:pointer;
-  transition:all 0.15s;user-select:none;-webkit-tap-highlight-color:transparent;
-  background:#F5EDE8;color:#6B5E54;
-}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:8px 16px;border-radius:16px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;user-select:none;-webkit-tap-highlight-color:transparent;background:#F5EDE8;color:#6B5E54}
 .btn:active{transform:scale(0.96)}
 .btn--primary{background:#FF6B35;color:#fff;box-shadow:0 2px 8px rgba(255,107,53,0.25)}
-.btn--primary:active{box-shadow:0 1px 4px rgba(255,107,53,0.2)}
 .btn--danger{background:#fff;color:#E53935;border:1.5px solid #FFCDD2}
 .btn--ghost{background:transparent;color:#FF6B35}
 .btn--sm{padding:6px 12px;font-size:0.75rem}
 .btn--block{display:flex;width:100%;justify-content:center}
 
+/* ===== TAB BAR ===== */
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;display:flex;background:#fff;z-index:900;box-shadow:0 -2px 20px rgba(0,0,0,0.06);padding-bottom:env(safe-area-inset-bottom,0);border-radius:20px 20px 0 0}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px calc(8px + env(safe-area-inset-bottom,0));gap:2px;font-size:0.7rem;color:#B8A59A;cursor:pointer;transition:color 0.15s;font-weight:600;-webkit-tap-highlight-color:transparent;user-select:none}
+.tab-btn.active{color:#FF6B35}
+.tab-btn .tab-ico{font-size:1.4rem;line-height:1}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
 /* ===== FAB ===== */
-.fab{
-  position:fixed;bottom:28px;right:20px;z-index:800;
-  width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FF8C42);
-  color:#fff;font-size:1.8rem;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 20px rgba(255,107,53,0.35);cursor:pointer;
-  transition:all 0.15s;font-weight:300;
-}
+.fab{position:fixed;bottom:80px;right:20px;z-index:800;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FF8C42);color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(255,107,53,0.35);cursor:pointer;transition:all 0.15s}
 .fab:active{transform:scale(0.92);box-shadow:0 2px 12px rgba(255,107,53,0.25)}
 
 /* ===== MODAL ===== */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;
-  display:flex;align-items:flex-end;justify-content:center;
-  animation:fadeIn 0.2s;
-}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{
-  background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:640px;
-  max-height:90dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,20px);
-  animation:slideUp 0.25s ease-out;
-  box-shadow:0 -4px 30px rgba(0,0,0,0.1);
-}
+.modal{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:640px;max-height:90dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,20px);animation:slideUp 0.25s ease-out;box-shadow:0 -4px 30px rgba(0,0,0,0.1)}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal__hd{
-  padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;
-  position:sticky;top:0;background:#fff;z-index:1;border-radius:24px 24px 0 0;
-}
+.modal__hd{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1;border-radius:24px 24px 0 0}
 .modal__hd h2{font-size:1.2rem;font-weight:700;color:#4A3028}
 .modal__close{font-size:1.2rem;color:#C4B5AA;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#F5EDE8}
-.modal__bd{padding:4px 20px 20px}
 
 /* ===== FORM ===== */
-.form-group{margin-bottom:18px}
+.form-group{margin-bottom:16px}
 .form-label{display:block;font-size:0.9rem;font-weight:700;color:#4A3028;margin-bottom:8px}
 .form-label .hint{font-weight:400;color:#C4B5AA;font-size:0.8rem}
-.form-input,.form-select,.form-textarea{
-  width:100%;padding:12px 16px;background:#FDF8F5;color:#4A3028;
-  border:1.5px solid #E8DDD5;border-radius:14px;font-size:1rem;
-  transition:border-color 0.15s;-webkit-appearance:none;appearance:none;
-}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#FF6B35;background:#fff}
+.form-input,.form-textarea{width:100%;padding:12px 16px;background:#FDF8F5;color:#4A3028;border:1.5px solid #E8DDD5;border-radius:14px;font-size:1rem;transition:border-color 0.15s}
+.form-input:focus,.form-textarea:focus{border-color:#FF6B35;background:#fff}
 .form-textarea{resize:vertical;min-height:80px;line-height:1.6}
-.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FF6B35' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
-.form-inline{display:flex;gap:8px}
-.form-inline .form-input{flex:1}
+.price-display{text-align:center;font-size:2.4rem;font-weight:900;color:#FF6B35;padding:8px 0 4px;transition:transform 0.1s ease-out}
+.price-display::before{content:'¥ ';font-size:1.4rem}
+.price-display.bounce{animation:priceBounce 0.25s ease-out}
+@keyframes priceBounce{0%{transform:scale(1.4)}50%{transform:scale(0.9)}100%{transform:scale(1)}}
+input[type=range]{-webkit-appearance:none;width:100%;height:8px;border-radius:4px;background:linear-gradient(to right,#FF6B35,#FF8C42);outline:none;margin:8px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;border-radius:50%;background:#fff;border:3px solid #FF6B35;box-shadow:0 2px 8px rgba(255,107,53,0.3);cursor:pointer;transition:transform 0.1s}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
+.price-labels{display:flex;justify-content:space-between;font-size:0.7rem;color:#C4B5AA;margin-top:2px;transition:all 0.2s}
 
 /* ===== IMAGE PICKER ===== */
-.img-picker{
-  border:2px dashed #E8DDD5;border-radius:16px;padding:32px 20px;
-  text-align:center;cursor:pointer;transition:all 0.15s;background:#FDF8F5;
-}
+.img-picker{border:2px dashed #E8DDD5;border-radius:16px;padding:32px 20px;text-align:center;cursor:pointer;transition:all 0.15s;background:#FDF8F5}
 .img-picker:hover,.img-picker:active{border-color:#FF6B35;background:#FFF5EE}
 .img-picker__icon{font-size:2.5rem;display:block;margin-bottom:8px}
 .img-picker__text{font-size:0.9rem;color:#8B7E74}
 .preview-wrap{position:relative;width:100%;margin-bottom:8px}
 .preview-img{width:100%;max-height:240px;object-fit:cover;border-radius:14px;background:#FFF0E5}
-.preview-remove{
-  position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;
-  background:#E53935;color:#fff;font-size:0.9rem;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 8px rgba(229,57,53,0.3);
-}
+.preview-remove{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:#E53935;color:#fff;font-size:0.9rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(229,57,53,0.3)}
 
 /* ===== TOAST ===== */
-#toast-wrap{
-  position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;
-  display:flex;flex-direction:column;gap:8px;pointer-events:none;
-}
-.toast{
-  padding:12px 20px;font-size:0.9rem;font-weight:600;border-radius:14px;
-  animation:toastIn 0.3s ease-out;pointer-events:auto;
-  box-shadow:0 4px 16px rgba(0,0,0,0.1);
-}
+#toast-wrap{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{padding:12px 20px;font-size:0.9rem;font-weight:600;border-radius:14px;animation:toastIn 0.3s ease-out;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.1)}
 .toast--ok{background:#4CAF50;color:#fff}
 .toast--err{background:#E53935;color:#fff}
 .toast--info{background:#FF6B35;color:#fff}
 @keyframes toastIn{0%{opacity:0;transform:translateY(-20px)}100%{opacity:1;transform:translateY(0)}}
 
-/* ===== EMPTY STATE ===== */
+/* ===== EMPTY ===== */
 .empty-state{text-align:center;padding:64px 24px}
 .empty-state__icon{font-size:4rem;margin-bottom:16px}
 .empty-state__title{font-size:1.1rem;font-weight:700;color:#4A3028;margin-bottom:8px}
 .empty-state__desc{font-size:0.9rem;color:#B8A59A;line-height:1.6}
 
-/* ===== CONFIRM DIALOG ===== */
+/* ===== CONFIRM ===== */
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1500;display:flex;align-items:center;justify-content:center;padding:24px}
 .confirm-box{background:#fff;border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.15)}
 .confirm-box p{font-size:1rem;margin-bottom:20px;line-height:1.6;color:#4A3028}
 .confirm-box .btn-row{display:flex;gap:10px;justify-content:center}
 
-/* ===== CLOUD SYNC INDICATOR ===== */
-.cloud-badge{
-  display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
-  border-radius:12px;font-size:0.7rem;font-weight:600;margin-top:8px;
-}
-.cloud-badge--local{background:#F5EDE8;color:#8B7E74}
-.cloud-badge--sync{background:#E8F5E9;color:#388E3C}
-.cloud-badge--error{background:#FFEBEE;color:#C62828}
-
-/* ===== BACKGROUND FLOATING ICONS ===== */
+/* ===== BG ICONS ===== */
 .bg-icons{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.bg-icon{
-  position:absolute;opacity:0.06;font-size:3rem;
-  animation:drift var(--dur) linear infinite;
-  animation-delay:var(--delay);
-  left:var(--x);top:var(--y);
-}
-@keyframes drift{
-  0%{transform:translate(0,0) rotate(0deg)}
-  25%{transform:translate(20px,-20px) rotate(5deg)}
-  50%{transform:translate(-10px,-40px) rotate(-3deg)}
-  75%{transform:translate(-20px,-15px) rotate(2deg)}
-  100%{transform:translate(0,0) rotate(0deg)}
-}
+.bg-icon{position:absolute;opacity:0.06;font-size:3rem;animation:drift var(--dur) linear infinite;animation-delay:var(--delay);left:var(--x);top:var(--y)}
+@keyframes drift{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(20px,-20px) rotate(5deg)}50%{transform:translate(-10px,-40px) rotate(-3deg)}75%{transform:translate(-20px,-15px) rotate(2deg)}100%{transform:translate(0,0) rotate(0deg)}}
 
-/* ===== Responsive ===== */
-@media(min-width:640px){
-  .food-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-  .food-grid .food-card{margin-bottom:0}
-}
-@media(max-width:380px){
-  .container{padding:0 10px 100px}
-  .header{margin:0 -10px;padding:20px 10px}
-  .header__brand{font-size:1.8rem}
-  .food-card__name{font-size:1rem}
-}
+/* ===== MENU CARD TAG ===== */
+.menu-badge{display:inline-block;background:#4CAF50;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:600}
+
+@media(min-width:640px){.food-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.food-grid .card{margin-bottom:0}}
+@media(max-width:380px){.container{padding:0 10px 120px}.header{margin:0 -10px;padding:20px 10px}.header__brand{font-size:1.8rem}.card__title{font-size:1rem}}
 </style>
 </head>
 <body>
 
-<!-- Background floating food icons -->
 <div class="bg-icons" aria-hidden="true"></div>
 
 <div class="container" id="app">
@@ -275,44 +161,38 @@ input,select,textarea{font-size:16px;color:#4A3028}
     <div class="header__content">
       <div class="header__brand">EatWhat</div>
       <div class="header__time" id="headerTime">—</div>
-      <div class="header__stats">
-        <div class="header__stat">🍜 <em id="statCount">0</em> 条记录</div>
-        <div class="header__stat">🏪 <em id="statStores">0</em> 家店</div>
-        <div class="header__stat">📅 <em id="statDays">0</em> 天</div>
-      </div>
+      <div class="header__stats" id="headerStats"></div>
     </div>
   </div>
 
-  <!-- Filters -->
-  <div style="padding:14px 0 0" id="filterArea">
-    <div class="chips-section" id="cuisineFilters">
-      <div class="chips-title">🍳 菜系</div>
-      <div class="chips-row" id="cuisineChips"></div>
+  <!-- Tab content -->
+  <div style="padding-top:14px">
+    <!-- Food Tab -->
+    <div class="tab-panel active" id="panel-food">
+      <div class="chips-section"><div class="chips-title">🍳 菜系</div><div class="chips-row" id="cuisineChips"></div></div>
+      <div class="chips-section"><div class="chips-title">🍽️ 类型</div><div class="chips-row" id="typeChips"></div></div>
+      <div id="foodList"></div>
     </div>
-    <div class="chips-section" id="typeFilters">
-      <div class="chips-title">🍽️ 类型</div>
-      <div class="chips-row" id="typeChips"></div>
+    <!-- Menu Tab -->
+    <div class="tab-panel" id="panel-menu">
+      <div id="menuList"></div>
     </div>
   </div>
-
-  <!-- Food cards -->
-  <div id="foodList"></div>
-
 </div>
 
 <!-- FAB -->
-<button class="fab" id="fabAdd" title="记录美食">＋</button>
+<button class="fab" id="fabAdd" title="添加">＋</button>
 
-<!-- Toast -->
+<!-- Tab Bar -->
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="food"><span class="tab-ico">🍜</span><span>美食</span></button>
+  <button class="tab-btn" data-tab="menu"><span class="tab-ico">📋</span><span>菜单</span></button>
+</nav>
+
+<!-- Toast / Modal / Confirm -->
 <div id="toast-wrap"></div>
-
-<!-- Modal -->
 <div id="modalRoot"></div>
-
-<!-- Confirm -->
 <div id="confirmRoot"></div>
-
-<!-- Hidden file input -->
 <input type="file" accept="image/*" capture="environment" id="photoInput" style="display:none">
 
 <script>
@@ -320,11 +200,16 @@ input,select,textarea{font-size:16px;color:#4A3028}
 const CUISINES = ['火锅','烧烤','自助餐','川菜','湘菜','粤菜','日料','韩餐','西餐','小吃','甜品','饮品','面馆','早点','其他'];
 const FOOD_TYPES = ['正餐','小吃','甜品','饮品','早餐','夜宵','下午茶','Brunch','外卖','自助'];
 const RATING_TAGS = ['必吃','推荐','一般','踩雷','惊艳'];
-const STORE_KEY = 'eatwhat_foods';
+const FOOD_KEY = 'eatwhat_foods';
+const MENU_KEY = 'eatwhat_menus';
 
 // ========== STORAGE ==========
-function loadFoods(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||[]}catch{return[]}}
-function saveFoods(data){localStorage.setItem(STORE_KEY,JSON.stringify(data))}
+function load(k){try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]}}
+function save(k,d){localStorage.setItem(k,JSON.stringify(d))}
+function loadFoods(){return load(FOOD_KEY)}
+function saveFoods(d){save(FOOD_KEY,d)}
+function loadMenus(){return load(MENU_KEY)}
+function saveMenus(d){save(MENU_KEY,d)}
 
 // ========== HELPERS ==========
 function genId(){return'ew'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
@@ -332,55 +217,41 @@ function esc(s){const d=document.createElement('div');d.textContent=s||'';return
 function nowISO(){return new Date().toISOString()}
 function fmtNum(n){const v=Number(n);return isNaN(v)?'':v.toFixed(0)}
 
+// ========== TAB STATE ==========
+let currentTab='food';
+
 // ========== CLOCK ==========
 function updateClock(){
   const now=new Date();
-  const weekdays=['日','一','二','三','四','五','六'];
-  const str=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} 星期${weekdays[now.getDay()]} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  document.getElementById('headerTime').textContent=str;
+  const w=['日','一','二','三','四','五','六'];
+  document.getElementById('headerTime').textContent=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} 星期${w[now.getDay()]} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 }
-setInterval(updateClock,30000);
-updateClock();
+setInterval(updateClock,30000);updateClock();
 
-// ========== BACKGROUND ICONS ==========
+// ========== BG ICONS ==========
 (function(){
-  const icons=['🍜','🍕','🍔','🍣','🍰','🍩','🥐','🥗','🌮','🍝','🍛','🍙','🥟','🍗','🧁','🥘','🍲','🍱','🍿','🥨','🍪','🍩','🧇','🥞','🍳','🥯','🍞','🥖','🧀','🍇','🍈','🍉','🍊','🍋','🍌','🍍','🥭','🍎','🍏','🍐','🍑','🍒','🍓','🫐','🥝','🍅','🥑','🥦','🥬','🥒','🌶️','🫑','🌽','🥕','🧄','🧅','🥔','🍠'];
+  const icons='🍜🍕🍔🍣🍰🍩🥐🥗🌮🍝🍛🍙🥟🍗🧁🥘🍲🍱🍿🥨🍪🧇🥞🍳🥯🍞🥖🧀🍇🍉🍊🍋🍌🍍🥭🍎🍑🍒🍓🥝🍅🥑🥦🥬🥒🌶️🌽🥕🧄🧅🥔🍠'.split('').filter(c=>c.charCodeAt(0)>255);
   const container=document.querySelector('.bg-icons');
   for(let i=0;i<30;i++){
-    const el=document.createElement('span');
-    el.className='bg-icon';
+    const el=document.createElement('span');el.className='bg-icon';
     el.textContent=icons[Math.floor(Math.random()*icons.length)];
-    el.style.setProperty('--x',Math.random()*90+'%');
-    el.style.setProperty('--y',Math.random()*90+'%');
-    el.style.setProperty('--dur',(20+Math.random()*40)+'s');
-    el.style.setProperty('--delay',-(Math.random()*30)+'s');
-    el.style.fontSize=(2+Math.random()*3)+'rem';
-    container.appendChild(el);
+    el.style.setProperty('--x',Math.random()*90+'%');el.style.setProperty('--y',Math.random()*90+'%');
+    el.style.setProperty('--dur',(20+Math.random()*40)+'s');el.style.setProperty('--delay',-(Math.random()*30)+'s');
+    el.style.fontSize=(2+Math.random()*3)+'rem';container.appendChild(el);
   }
 })();
 
 // ========== TOAST ==========
 function toast(msg,type){
-  const c=document.getElementById('toast-wrap');
-  const t=document.createElement('div');
-  t.className='toast toast--'+(type||'info');t.textContent=msg;
-  c.appendChild(t);
+  const c=document.getElementById('toast-wrap');const t=document.createElement('div');
+  t.className='toast toast--'+(type||'info');t.textContent=msg;c.appendChild(t);
   setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(()=>t.remove(),300)},2000);
 }
 
 // ========== CONFIRM ==========
 function confirm(msg,cb){
   const r=document.getElementById('confirmRoot');
-  r.innerHTML=`
-    <div class="confirm-overlay" id="confirmOverlay">
-      <div class="confirm-box">
-        <p>${msg}</p>
-        <div class="btn-row">
-          <button class="btn" id="confirmNo">取消</button>
-          <button class="btn btn--danger" id="confirmYes">确认删除</button>
-        </div>
-      </div>
-    </div>`;
+  r.innerHTML=`<div class="confirm-overlay" id="confirmOverlay"><div class="confirm-box"><p>${msg}</p><div class="btn-row"><button class="btn" id="confirmNo">取消</button><button class="btn btn--danger" id="confirmYes">确认删除</button></div></div></div>`;
   document.getElementById('confirmOverlay').onclick=e=>{if(e.target.id==='confirmOverlay')r.innerHTML=''};
   document.getElementById('confirmNo').onclick=()=>r.innerHTML='';
   document.getElementById('confirmYes').onclick=()=>{cb();r.innerHTML=''};
@@ -389,13 +260,7 @@ function confirm(msg,cb){
 // ========== MODAL ==========
 function openModal(title,content){
   const r=document.getElementById('modalRoot');
-  r.innerHTML=`
-    <div class="modal-overlay" id="modalOverlay">
-      <div class="modal">
-        <div class="modal__hd"><h2>${title}</h2><button class="modal__close" id="modalClose">✕</button></div>
-        <div class="modal__bd">${content}</div>
-      </div>
-    </div>`;
+  r.innerHTML=`<div class="modal-overlay" id="modalOverlay"><div class="modal"><div class="modal__hd"><h2>${title}</h2><button class="modal__close" id="modalClose">✕</button></div><div class="modal__bd">${content}</div></div></div>`;
   document.getElementById('modalClose').onclick=()=>r.innerHTML='';
   document.getElementById('modalOverlay').onclick=e=>{if(e.target.id==='modalOverlay')r.innerHTML=''};
 }
@@ -407,476 +272,267 @@ function compressPhoto(file){
     const reader=new FileReader();
     reader.onload=e=>{
       const img=new Image();
-      img.onload=()=>{
-        const canvas=document.createElement('canvas');
-        const maxW=800;let w=img.width,h=img.height;
-        if(w>maxW){h=h*maxW/w;w=maxW}
-        canvas.width=w;canvas.height=h;
-        canvas.getContext('2d').drawImage(img,0,0,w,h);
-        resolve(canvas.toDataURL('image/jpeg',0.6));
-      };
+      img.onload=()=>{const c=document.createElement('canvas');const maxW=800;let w=img.width,h=img.height;if(w>maxW){h=h*maxW/w;w=maxW}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',0.6))};
       img.src=e.target.result;
     };
     reader.readAsDataURL(file);
   });
 }
-
 function pickPhoto(){
   return new Promise(resolve=>{
-    const input=document.getElementById('photoInput');
-    input.value='';
-    input.onchange=async()=>{
-      if(input.files.length){const c=await compressPhoto(input.files[0]);resolve(c)}
-      else{resolve(null)}
-    };
+    const input=document.getElementById('photoInput');input.value='';
+    input.onchange=async()=>{if(input.files.length)resolve(await compressPhoto(input.files[0]));else resolve(null)};
     input.click();
   });
 }
 
-// ========== LOCATION — GPS + manual address ==========
-function getCurrentLocation(){
-  return new Promise(resolve=>{
-    if(!navigator.geolocation){
-      toast('您的浏览器不支持定位','err');resolve(null);return;
-    }
-    toast('正在获取位置...','info');
-    navigator.geolocation.getCurrentPosition(
-      pos=>{
-        const{latitude,longitude}=pos.coords;
-        // Just get coordinates; user fills in the readable address
-        resolve({
-          lat:latitude,lng:longitude,
-          name:`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`,
-          full:''
-        });
-        toast('已获取坐标，请填写地址名称','ok');
-      },
-      err=>{
-        toast('定位失败：'+(err.message||'请检查定位权限'),'err');
-        resolve(null);
-      },
-      {timeout:15000,enableHighAccuracy:true,maximumAge:300000}
-    );
-  });
-}
-
-function openMap(lat,lng,name){
-  if(!lat||!lng){toast('暂无位置信息','info');return}
-  const ua=navigator.userAgent;
-  let url;
-  if(/MicroMessenger/i.test(ua)){
-    url=`https://apis.map.qq.com/uri/v1/marker?marker=coord:${lat},${lng};title:${encodeURIComponent(name)}`;
-  }else if(/iPhone|iPad|iPod/i.test(ua)){
-    url=`https://maps.apple.com/?q=${encodeURIComponent(name)}&ll=${lat},${lng}`;
-  }else{
-    url=`https://www.google.com/maps?q=${lat},${lng}`;
-  }
-  window.open(url,'_blank');
-}
-
-// ========== RENDER ==========
+// ===== FOOD FILTERS =====
 const filters={cuisine:'全部',type:'全部'};
 
 function getCuisineList(){const s=new Set(loadFoods().map(f=>f.cuisine).filter(Boolean));return['全部',...Array.from(s).sort()]}
 function getTypeList(){const s=new Set(loadFoods().map(f=>f.foodType).filter(Boolean));return['全部',...Array.from(s).sort()]}
-function getFilteredFoods(){
-  let foods=loadFoods();
-  foods.sort((a,b)=>new Date(b.createTime)-new Date(a.createTime));
-  if(filters.cuisine!=='全部')foods=foods.filter(f=>f.cuisine===filters.cuisine);
-  if(filters.type!=='全部')foods=foods.filter(f=>f.foodType===filters.type);
-  return foods;
-}
 
-function updateStats(){
-  const foods=loadFoods();
-  document.getElementById('statCount').textContent=foods.length;
-  const stores=new Set(foods.map(f=>f.storeName).filter(Boolean));
-  document.getElementById('statStores').textContent=stores.size;
-  // Count unique days
-  const days=new Set(foods.map(f=>f.createTime?f.createTime.slice(0,10):''));
-  document.getElementById('statDays').textContent=days.size||1;
-}
-
-function renderChips(containerId,list,current,filterKey){
-  const html=list.map(c=>
-    `<span class="chip${c===current?' active':''}" data-filter="${filterKey}" data-val="${esc(c)}">${esc(c)}</span>`
-  ).join('');
-  document.getElementById(containerId).innerHTML=html;
-}
-
-function renderAllFilters(){
-  renderChips('cuisineChips',getCuisineList(),filters.cuisine,'cuisine');
-  renderChips('typeChips',getTypeList(),filters.type,'type');
-}
-
-function renderFoodList(){
-  const foods=getFilteredFoods();
-  const container=document.getElementById('foodList');
-  if(foods.length===0){
-    const hasFilter=filters.cuisine!=='全部'||filters.type!=='全部';
-    container.innerHTML=`<div class="empty-state">
-      <div class="empty-state__icon">${hasFilter?'🔍':'🍽️'}</div>
-      <div class="empty-state__title">${hasFilter?'没有匹配的记录':'还没有美食记录'}</div>
-      <div class="empty-state__desc">${hasFilter?'试试切换筛选条件':'点击右下角 <b>＋</b> 按钮，记录你的第一道美食吧！'}</div>
-    </div>`;
-    return;
-  }
-  const useGrid=window.innerWidth>=640&&foods.length>=2;
-  const inner=foods.map(renderFoodCard).join('');
-  container.innerHTML=useGrid?`<div class="food-grid">${inner}</div>`:inner;
-}
-
-function renderFoodCard(f){
-  const timeStr=f.createTime?new Date(f.createTime).toLocaleDateString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
-  const imgHtml=f.photo
-    ?`<img class="food-card__img" src="${f.photo}" alt="" loading="lazy">`
-    :`<div class="food-card__img food-card__img--placeholder">🍜</div>`;
-
-  const tags=[];
-  if(f.cuisine)tags.push(`<span class="tag tag--cuisine">${esc(f.cuisine)}</span>`);
-  if(f.foodType)tags.push(`<span class="tag tag--type">${esc(f.foodType)}</span>`);
-  if(f.ratingTag){
-    const rc={'必吃':'tag--must','推荐':'tag--rating','一般':'tag--mid','踩雷':'tag--bad','惊艳':'tag--must'};
-    tags.push(`<span class="tag ${rc[f.ratingTag]||'tag--rating'}">${esc(f.ratingTag)}</span>`);
-  }
-
-  const locHtml=(f.placeName)
-    ?`<div class="food-card__store" style="cursor:pointer" data-action="map" data-lat="${f.lat||''}" data-lng="${f.lng||''}" data-name="${esc(f.name||f.storeName||'')}">${esc(f.placeName)}</div>`
-    :'';
-
-  return`<div class="food-card" data-id="${f._id}">
-    ${imgHtml}
-    <div class="food-card__body">
-      <div class="food-card__header">
-        <div style="flex:1;min-width:0">
-          <div class="food-card__name">${esc(f.name)}</div>
-          ${f.storeName?`<div class="food-card__store" style="display:flex;align-items:center;gap:4px">🏪 ${esc(f.storeName)}</div>`:''}
-        </div>
-        ${f.price?`<div class="food-card__price">¥${fmtNum(f.price)}</div>`:''}
-      </div>
-      ${locHtml&&!f.storeName?locHtml:''}
-      ${tags.length?`<div class="food-card__meta">${tags.join('')}</div>`:''}
-      ${f.notes?`<div class="food-card__notes">「${esc(f.notes)}」</div>`:''}
-      <div class="food-card__footer">
-        <div class="food-card__time">${timeStr}</div>
-        <div class="food-card__actions">
-          <button class="btn btn--sm" data-action="edit" data-id="${f._id}">✏️</button>
-          <button class="btn btn--sm btn--ghost" data-action="delete" data-id="${f._id}">🗑️</button>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
+// ===== RENDER ALL =====
 function renderAll(){
   updateStats();
   renderAllFilters();
-  renderFoodList();
+  if(currentTab==='food')renderFoodList();
+  else renderMenuList();
 }
 
-// ========== FORM HTML ==========
-function makeFormHtml(food){
-  const isEdit=!!food;
-  const id=food?food._id:'';
-  const cuisines=getCuisineList().filter(c=>c!=='全部');
-  const types=getTypeList().filter(c=>c!=='全部');
-
-  const photoHtml=food&&food.photo
-    ?`<div class="preview-wrap"><img src="${food.photo}" class="preview-img" id="formPreview"><button class="preview-remove" data-action="remove-photo">✕</button></div>`
-    :`<div class="img-picker" data-action="pick-photo"><span class="img-picker__icon">📸</span><span class="img-picker__text">点击拍照 / 选择照片</span></div><img class="preview-img" id="formPreview" style="display:none">`;
-
-  const ratingOpts=RATING_TAGS.map(t=>{
-    const active=food&&food.ratingTag===t;
-    return`<span class="chip${active?' active':''}" data-rating="${esc(t)}">${esc(t)}</span>`;
-  }).join('');
-
-  return`<form id="foodForm" data-edit-id="${id}">
-    ${photoHtml}
-    <input type="hidden" name="photo" value="${food&&food.photo?food.photo:''}" id="photoField">
-
-    <div class="form-group"><label class="form-label">🍜 美食名称 *</label>
-      <input class="form-input" name="name" value="${food?esc(food.name):''}" placeholder="比如：招牌豚骨拉面" required>
-    </div>
-
-    <div class="form-group"><label class="form-label">🏪 店名</label>
-      <input class="form-input" name="storeName" value="${food?esc(food.storeName||''):''}" placeholder="在哪家店吃的？" list="storeSuggest">
-      <datalist id="storeSuggest"></datalist>
-    </div>
-
-    <div class="form-group"><label class="form-label">📍 位置</label>
-      <div class="form-inline">
-        <input class="form-input" name="placeName" value="${food?esc(food.placeName||''):''}" placeholder="输入地址，如：湖北省武汉市蔡甸区经开万达" style="flex:1">
-        <button type="button" class="btn btn--primary btn--sm" data-action="get-loc" style="flex-shrink:0">📍</button>
-      </div>
-      <div style="font-size:0.75rem;color:#C4B5AA;margin-top:4px">点击右侧按钮获取坐标，手动填写地址名称</div>
-      <input type="hidden" name="lat" value="${food?food.lat||'':''}">
-      <input type="hidden" name="lng" value="${food?food.lng||'':''}">
-    </div>
-
-    <div class="form-group"><label class="form-label">💰 价格 <span class="hint">(¥<span id="priceLabel">${food?food.price||'0':''}</span>)</span></label>
-      <input type="range" name="price" min="0" max="500" step="1" value="${food?food.price||'0':''}" style="width:100%;height:24px;accent-color:#FF6B35;margin-top:4px" id="priceSlider">
-      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#C4B5AA;margin-top:2px">
-        <span>¥0</span><span>¥100</span><span>¥200</span><span>¥300</span><span>¥400</span><span>¥500</span>
-      </div>
-    </div>
-
-    <div class="form-group"><label class="form-label">🍳 菜系</label>
-      <div class="chips-row" id="cuisineChipSelect">
-        ${cuisines.map(c=>`<span class="chip${food&&food.cuisine===c?' active':''}" data-select="cuisine" data-val="${esc(c)}">${esc(c)}</span>`).join('')}
-        <span class="chip chip--new" data-select="cuisine" data-val="__new__">＋ 添加</span>
-      </div>
-      <div id="newCuisineGroup" style="display:none;margin-top:8px">
-        <input class="form-input" name="newCuisine" placeholder="输入新菜系名称">
-      </div>
-    </div>
-
-    <div class="form-group"><label class="form-label">🍽️ 类型</label>
-      <div class="chips-row" id="typeChipSelect">
-        ${types.map(c=>`<span class="chip${food&&food.foodType===c?' active':''}" data-select="type" data-val="${esc(c)}">${esc(c)}</span>`).join('')}
-        <span class="chip chip--new" data-select="type" data-val="__new__">＋ 添加</span>
-      </div>
-      <div id="newTypeGroup" style="display:none;margin-top:8px">
-        <input class="form-input" name="newFoodType" placeholder="输入新类型名称">
-      </div>
-    </div>
-
-    <div class="form-group"><label class="form-label">⭐ 评价</label>
-      <div class="chips-row" id="ratingChips">${ratingOpts}</div>
-    </div>
-
-    <div class="form-group"><label class="form-label">📝 点评</label>
-      <textarea class="form-textarea" name="notes" placeholder="味道怎么样？有什么特别的？值得再来吗？">${food?esc(food.notes||''):''}</textarea>
-    </div>
-
-    <button type="submit" class="btn btn--primary btn--block" style="padding:14px;font-size:1rem">💾 ${isEdit?'保存修改':'记录美食'}</button>
-  </form>`;
-}
-
-// ========== STORE NAME SUGGESTIONS ==========
-function updateStoreSuggestions(){
-  const foods=loadFoods();
-  const stores=[...new Set(foods.map(f=>f.storeName).filter(Boolean))];
-  const datalist=document.getElementById('storeSuggest');
-  if(datalist)datalist.innerHTML=stores.map(s=>`<option value="${esc(s)}">`).join('');
-}
-
-// ========== EVENT DELEGATION ==========
-document.addEventListener('click',async function(e){
-  // Filter chips
-  const chip=e.target.closest('.chip[data-filter]');
-  if(chip){
-    const key=chip.dataset.filter;const val=chip.dataset.val;
-    if(filters[key]===val)filters[key]='全部';else filters[key]=val;
-    renderAll();
-    return;
+function updateStats(){
+  const foods=loadFoods();const menus=loadMenus();
+  if(currentTab==='food'){
+    const stores=new Set(foods.map(f=>f.storeName).filter(Boolean));
+    const days=new Set(foods.map(f=>f.createTime?f.createTime.slice(0,10):''));
+    document.getElementById('headerStats').innerHTML=`<div class="header__stat">🍜 <em>${foods.length}</em> 条记录</div><div class="header__stat">🏪 <em>${stores.size}</em> 家店</div><div class="header__stat">📅 <em>${days.size||1}</em> 天</div>`;
+  }else{
+    const stores=new Set(menus.map(m=>m.storeName).filter(Boolean));
+    const days=new Set(menus.map(m=>m.createTime?m.createTime.slice(0,10):''));
+    document.getElementById('headerStats').innerHTML=`<div class="header__stat">📋 <em>${menus.length}</em> 份菜单</div><div class="header__stat">🏪 <em>${stores.size}</em> 家店</div><div class="header__stat">📅 <em>${days.size||1}</em> 天</div>`;
   }
+}
+
+function renderAllFilters(){
+  if(currentTab!=='food'){document.getElementById('cuisineChips').parentElement.style.display='none';document.getElementById('typeChips').parentElement.style.display='none';return}
+  document.getElementById('cuisineChips').parentElement.style.display='';document.getElementById('typeChips').parentElement.style.display='';
+  renderChips('cuisineChips',getCuisineList(),filters.cuisine,'cuisine');
+  renderChips('typeChips',getTypeList(),filters.type,'type');
+}
+function renderChips(id,list,current,key){
+  document.getElementById(id).innerHTML=list.map(c=>`<span class="chip${c===current?' active':''}" data-filter="${key}" data-val="${esc(c)}">${esc(c)}</span>`).join('');
+}
+
+// ===== FOOD LIST =====
+function renderFoodList(){
+  let foods=loadFoods();foods.sort((a,b)=>new Date(b.createTime)-new Date(a.createTime));
+  if(filters.cuisine!=='全部')foods=foods.filter(f=>f.cuisine===filters.cuisine);
+  if(filters.type!=='全部')foods=foods.filter(f=>f.foodType===filters.type);
+  const c=document.getElementById('foodList');
+  if(!foods.length){
+    const h=filters.cuisine!=='全部'||filters.type!=='全部';
+    c.innerHTML=`<div class="empty-state"><div class="empty-state__icon">${h?'🔍':'🍽️'}</div><div class="empty-state__title">${h?'没有匹配的记录':'还没有美食记录'}</div><div class="empty-state__desc">${h?'试试切换筛选条件':'点击右下角 ＋ 记录第一道美食！'}</div></div>`;return;
+  }
+  const inner=foods.map(f=>{
+    const time=new Date(f.createTime).toLocaleDateString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const img=f.photo?`<img class="card__img" src="${f.photo}" loading="lazy">`:`<div class="card__img card__img--placeholder">🍜</div>`;
+    const tags=[];if(f.cuisine)tags.push(`<span class="tag tag--cuisine">${esc(f.cuisine)}</span>`);if(f.foodType)tags.push(`<span class="tag tag--type">${esc(f.foodType)}</span>`);
+    if(f.ratingTag){const rc={'必吃':'tag--must','推荐':'tag--rating','一般':'tag--mid','踩雷':'tag--bad','惊艳':'tag--must'};tags.push(`<span class="tag ${rc[f.ratingTag]||'tag--rating'}">${esc(f.ratingTag)}</span>`)}
+    const addr=f.address?`<div class="card__addr">${esc(f.address)}</div>`:'';
+    return`<div class="card"><div class="card__body">${f.photo?`<img class="card__img" src="${f.photo}" loading="lazy" style="border-radius:14px;margin-bottom:12px">`:''}<div class="card__header"><div style="flex:1;min-width:0"><div class="card__title">${esc(f.name)}</div>${f.storeName?`<div class="card__addr">🏪 ${esc(f.storeName)}</div>`:''}${!f.storeName?addr:''}</div>${f.price?`<div class="card__price">¥${fmtNum(f.price)}</div>`:''}</div>${tags.length?`<div class="card__meta">${tags.join('')}</div>`:''}${f.notes?`<div class="card__notes">「${esc(f.notes)}」</div>`:''}<div class="card__footer"><div class="card__time">${time}</div><div class="card__actions"><button class="btn btn--sm" data-action="edit-food" data-id="${f._id}">✏️</button><button class="btn btn--sm btn--ghost" data-action="delete-food" data-id="${f._id}">🗑️</button></div></div></div></div>`;
+  }).join('');
+  c.innerHTML=window.innerWidth>=640&&foods.length>=2?`<div class="food-grid">${inner}</div>`:inner;
+}
+
+// ===== MENU LIST =====
+function renderMenuList(){
+  let menus=loadMenus();menus.sort((a,b)=>new Date(b.createTime)-new Date(a.createTime));
+  const c=document.getElementById('menuList');
+  if(!menus.length){c.innerHTML=`<div class="empty-state"><div class="empty-state__icon">📋</div><div class="empty-state__title">还没有菜单记录</div><div class="empty-state__desc">切换到底部 📋 菜单 Tab<br>点击右下角 ＋ 拍下餐厅菜单吧！</div></div>`;return}
+  const inner=menus.map(m=>{
+    const time=new Date(m.createTime).toLocaleDateString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const tags=[];if(m.cuisine)tags.push(`<span class="tag tag--cuisine">${esc(m.cuisine)}</span>`);if(m.foodType)tags.push(`<span class="tag tag--type">${esc(m.foodType)}</span>`);
+    return`<div class="card"><div class="card__body">${m.photo?`<img class="card__img" src="${m.photo}" loading="lazy" style="border-radius:14px;margin-bottom:12px">`:''}<div class="card__header"><div style="flex:1;min-width:0"><div class="card__title">📋 ${esc(m.storeName||'未命名餐厅')}</div>${m.address?`<div class="card__addr">${esc(m.address)}</div>`:''}</div><span class="menu-badge">菜单</span></div>${tags.length?`<div class="card__meta">${tags.join('')}</div>`:''}${m.notes?`<div class="card__notes">「${esc(m.notes)}」</div>`:''}<div class="card__footer"><div class="card__time">${time}</div><div class="card__actions"><button class="btn btn--sm" data-action="edit-menu" data-id="${m._id}">✏️</button><button class="btn btn--sm btn--ghost" data-action="delete-menu" data-id="${m._id}">🗑️</button></div></div></div></div>`;
+  }).join('');
+  c.innerHTML=menus.length>=2?`<div class="food-grid">${inner}</div>`:inner;
+}
+
+// ===== FOOD FORM =====
+function makeFoodForm(food){
+  const isEdit=!!food;
+  const cuisines=getCuisineList().filter(c=>c!=='全部');const types=getTypeList().filter(c=>c!=='全部');
+  const photoHtml=food&&food.photo?`<div class="preview-wrap"><img src="${food.photo}" class="preview-img" id="formPreview"><button class="preview-remove" data-action="remove-photo">✕</button></div>`:`<div class="img-picker" data-action="pick-photo"><span class="img-picker__icon">📸</span><span class="img-picker__text">点击拍照 / 选择照片</span></div><img class="preview-img" id="formPreview" style="display:none">`;
+  return`<form id="foodForm" data-edit-id="${food?food._id:''}">
+    ${photoHtml}<input type="hidden" name="photo" value="${food&&food.photo?food.photo:''}" id="photoField">
+    <div class="form-group"><label class="form-label">🍜 美食名称 *</label><input class="form-input" name="name" value="${food?esc(food.name):''}" placeholder="比如：招牌豚骨拉面" required></div>
+    <div class="form-group"><label class="form-label">🏪 店名</label><input class="form-input" name="storeName" value="${food?esc(food.storeName||''):''}" placeholder="在哪家店吃的？" list="storeSuggest"><datalist id="storeSuggest"></datalist></div>
+    <div class="form-group"><label class="form-label">📍 地址</label><input class="form-input" name="address" value="${food?esc(food.address||''):''}" placeholder="比如：武汉市蔡甸区经开万达3楼"></div>
+    <div class="form-group">
+      <label class="form-label">💰 价格</label>
+      <div class="price-display" id="priceDisplay">${food?food.price||'0':''}</div>
+      <input type="range" name="price" min="0" max="100" step="1" value="${food?.price>100?100:(food?food.price||'0':'0')}" style="width:100%" id="priceSlider">
+      <div class="price-labels" id="priceLabels"><span>¥0</span><span>¥25</span><span>¥50</span><span>¥75</span><span>¥100</span></div>
+    </div>
+    <div class="form-group"><label class="form-label">🍳 菜系</label><div class="chips-row" id="cuisineChipForm">${cuisines.map(c=>`<span class="chip${food&&food.cuisine===c?' active':''}" data-select="cuisine" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="cuisine" data-val="__new__">＋ 添加</span></div><div id="newCuisineGroup" style="display:none;margin-top:8px"><input class="form-input" name="newCuisine" placeholder="输入新菜系名称"></div></div>
+    <div class="form-group"><label class="form-label">🍽️ 类型</label><div class="chips-row" id="typeChipForm">${types.map(c=>`<span class="chip${food&&food.foodType===c?' active':''}" data-select="type" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="type" data-val="__new__">＋ 添加</span></div><div id="newTypeGroup" style="display:none;margin-top:8px"><input class="form-input" name="newFoodType" placeholder="输入新类型名称"></div></div>
+    <div class="form-group"><label class="form-label">⭐ 评价</label><div class="chips-row" id="ratingChips">${RATING_TAGS.map(t=>`<span class="chip${food&&food.ratingTag===t?' active':''}" data-rating="${esc(t)}">${esc(t)}</span>`).join('')}</div></div>
+    <div class="form-group"><label class="form-label">📝 点评</label><textarea class="form-textarea" name="notes" placeholder="味道怎么样？值得再来吗？">${food?esc(food.notes||''):''}</textarea></div>
+    <button type="submit" class="btn btn--primary btn--block" style="padding:14px;font-size:1rem">💾 ${isEdit?'保存修改':'记录美食'}</button></form>`;
+}
+
+// ===== MENU FORM =====
+function makeMenuForm(menu){
+  const isEdit=!!menu;
+  const cuisines=getCuisineList().filter(c=>c!=='全部');const types=getTypeList().filter(c=>c!=='全部');
+  const photoHtml=menu&&menu.photo?`<div class="preview-wrap"><img src="${menu.photo}" class="preview-img" id="formPreview"><button class="preview-remove" data-action="remove-photo">✕</button></div>`:`<div class="img-picker" data-action="pick-photo"><span class="img-picker__icon">📸</span><span class="img-picker__text">点击拍摄菜单</span></div><img class="preview-img" id="formPreview" style="display:none">`;
+  return`<form id="menuForm" data-edit-id="${menu?menu._id:''}">
+    ${photoHtml}<input type="hidden" name="photo" value="${menu&&menu.photo?menu.photo:''}" id="photoField">
+    <div class="form-group"><label class="form-label">🏪 餐厅名称 *</label><input class="form-input" name="storeName" value="${menu?esc(menu.storeName||''):''}" placeholder="这家店叫什么？" required></div>
+    <div class="form-group"><label class="form-label">📍 地址</label><input class="form-input" name="address" value="${menu?esc(menu.address||''):''}" placeholder="比如：武汉市蔡甸区经开万达3楼"></div>
+    <div class="form-group"><label class="form-label">🍳 菜系</label><div class="chips-row" id="cuisineChipForm">${cuisines.map(c=>`<span class="chip${menu&&menu.cuisine===c?' active':''}" data-select="cuisine" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="cuisine" data-val="__new__">＋ 添加</span></div><div id="newCuisineGroup" style="display:none;margin-top:8px"><input class="form-input" name="newCuisine" placeholder="输入新菜系名称"></div></div>
+    <div class="form-group"><label class="form-label">🍽️ 类型</label><div class="chips-row" id="typeChipForm">${types.map(c=>`<span class="chip${menu&&menu.foodType===c?' active':''}" data-select="type" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="type" data-val="__new__">＋ 添加</span></div><div id="newTypeGroup" style="display:none;margin-top:8px"><input class="form-input" name="newFoodType" placeholder="输入新类型名称"></div></div>
+    <div class="form-group"><label class="form-label">📝 备注</label><textarea class="form-textarea" name="notes" placeholder="菜单上有哪些特色菜？">${menu?esc(menu.notes||''):''}</textarea></div>
+    <button type="submit" class="btn btn--primary btn--block" style="padding:14px;font-size:1rem">💾 ${isEdit?'保存修改':'保存菜单'}</button></form>`;
+}
+
+// ===== STORE SUGGESTIONS =====
+function updateStoreSuggestions(){
+  const foods=loadFoods(),menus=loadMenus();
+  const stores=[...new Set([...foods.map(f=>f.storeName),...menus.map(m=>m.storeName)].filter(Boolean))];
+  const dl=document.getElementById('storeSuggest');if(dl)dl.innerHTML=stores.map(s=>`<option value="${esc(s)}">`).join('');
+}
+
+// ===== EVENT DELEGATION =====
+document.addEventListener('click',async function(e){
+  // Tab bar
+  const tb=e.target.closest('.tab-btn');
+  if(tb){currentTab=tb.dataset.tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===currentTab));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+currentTab));document.getElementById('fabAdd').style.display='flex';renderAll();return}
+
+  // Filter chips
+  const fc=e.target.closest('.chip[data-filter]');
+  if(fc){const k=fc.dataset.filter,v=fc.dataset.val;filters[k]=filters[k]===v?'全部':v;renderAll();return}
 
   // Rating chips
-  const ratingChip=e.target.closest('.chip[data-rating]');
-  if(ratingChip){
-    ratingChip.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-    ratingChip.classList.add('active');
-    return;
-  }
+  const rc=e.target.closest('.chip[data-rating]');
+  if(rc){rc.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));rc.classList.add('active');return}
 
-  // Cuisine/Type select chips in form
-  const selectChip=e.target.closest('.chip[data-select]');
-  if(selectChip){
-    const key=selectChip.dataset.select;
-    const val=selectChip.dataset.val;
-    if(val==='__new__'){
-      // Show new input
-      const newGroup=document.getElementById(key==='cuisine'?'newCuisineGroup':'newTypeGroup');
-      if(newGroup)newGroup.style.display='block';
-      // Deselect any active chip
-      selectChip.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-      selectChip.classList.add('active');
-      return;
-    }
-    // Hide new input if visible
-    const newGroup=document.getElementById(key==='cuisine'?'newCuisineGroup':'newTypeGroup');
-    if(newGroup)newGroup.style.display='none';
-    // Toggle: deselect others, select this
-    selectChip.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-    selectChip.classList.add('active');
-    return;
-  }
+  // Cuisine/Type select chips
+  const sc=e.target.closest('.chip[data-select]');
+  if(sc){const k=sc.dataset.select,v=sc.dataset.val;const ng=document.getElementById(k==='cuisine'?'newCuisineGroup':'newTypeGroup');if(v==='__new__'){if(ng)ng.style.display='block';sc.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));sc.classList.add('active');return}if(ng)ng.style.display='none';sc.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));sc.classList.add('active');return}
 
   // FAB
   if(e.target.closest('#fabAdd')){
-    const html=makeFormHtml(null);
-    openModal('📸 记录美食',html);
-    setTimeout(updateStoreSuggestions,100);
-    initFormPreview();
-    return;
+    if(currentTab==='menu'){openModal('📋 拍摄菜单',makeMenuForm(null));setTimeout(updateStoreSuggestions,100);initPreview();return}
+    openModal('📸 记录美食',makeFoodForm(null));setTimeout(updateStoreSuggestions,100);initPreview();return;
   }
 
-  // Edit
-  const editBtn=e.target.closest('[data-action="edit"]');
-  if(editBtn){
-    const foods=loadFoods();const food=foods.find(f=>f._id===editBtn.dataset.id);
-    if(!food)return;
-    const html=makeFormHtml(food);
-    openModal('✏️ 编辑记录',html);
-    setTimeout(updateStoreSuggestions,100);
-    initFormPreview();
-    return;
-  }
+  // Edit food
+  const ef=e.target.closest('[data-action="edit-food"]');
+  if(ef){const f=loadFoods().find(x=>x._id===ef.dataset.id);if(!f)return;openModal('✏️ 编辑',makeFoodForm(f));setTimeout(updateStoreSuggestions,100);initPreview();return}
 
-  // Delete
-  const delBtn=e.target.closest('[data-action="delete"]');
-  if(delBtn){
-    const id=delBtn.dataset.id;const foods=loadFoods();const food=foods.find(f=>f._id===id);
-    if(!food)return;
-    confirm(`确定要删除「${food.name}」吗？<br><span style="font-size:0.85rem;color:#B8A59A">此操作不可恢复</span>`,
-      ()=>{
-        const updated=loadFoods().filter(f=>f._id!==id);
-        saveFoods(updated);toast('已删除','ok');renderAll();
-      }
-    );
-    return;
-  }
+  // Delete food
+  const df=e.target.closest('[data-action="delete-food"]');
+  if(df){const id=df.dataset.id;const f=loadFoods().find(x=>x._id===id);if(!f)return;confirm(`确定删除「${f.name}」？<br><span style="font-size:0.85rem;color:#B8A59A">不可恢复</span>`,()=>{saveFoods(loadFoods().filter(x=>x._id!==id));toast('已删除','ok');renderAll()});return}
 
-  // Map link
-  const mapBtn=e.target.closest('[data-action="map"]');
-  if(mapBtn){
-    openMap(parseFloat(mapBtn.dataset.lat),parseFloat(mapBtn.dataset.lng),mapBtn.dataset.name);
-    return;
-  }
+  // Edit menu
+  const em=e.target.closest('[data-action="edit-menu"]');
+  if(em){const m=loadMenus().find(x=>x._id===em.dataset.id);if(!m)return;openModal('✏️ 编辑菜单',makeMenuForm(m));setTimeout(updateStoreSuggestions,100);initPreview();return}
+
+  // Delete menu
+  const dm=e.target.closest('[data-action="delete-menu"]');
+  if(dm){const id=dm.dataset.id;const m=loadMenus().find(x=>x._id===id);if(!m)return;confirm(`确定删除「${m.storeName||'未命名'}」的菜单？<br><span style="font-size:0.85rem;color:#B8A59A">不可恢复</span>`,()=>{saveMenus(loadMenus().filter(x=>x._id!==id));toast('已删除','ok');renderAll()});return}
 });
 
-// ========== MODAL EVENTS ==========
+// ===== MODAL EVENTS =====
 document.addEventListener('click',async function(e){
-  // Pick photo
-  const pickBtn=e.target.closest('[data-action="pick-photo"]');
-  if(pickBtn){
-    const photo=await pickPhoto();
-    if(photo){
-      document.getElementById('photoField').value=photo;
-      const preview=document.getElementById('formPreview');
-      preview.src=photo;preview.style.display='block';
-      const picker=document.querySelector('.img-picker');
-      if(picker)picker.style.display='none';
-    }
-    return;
-  }
+  const pb=e.target.closest('[data-action="pick-photo"]');
+  if(pb){const p=await pickPhoto();if(p){document.getElementById('photoField').value=p;const pr=document.getElementById('formPreview');pr.src=p;pr.style.display='block';const pk=document.querySelector('.img-picker');if(pk)pk.style.display='none'}return}
 
-  // Remove photo
-  const removeBtn=e.target.closest('[data-action="remove-photo"]');
-  if(removeBtn){
-    document.getElementById('photoField').value='';
-    const preview=document.getElementById('formPreview');
-    preview.src='';preview.style.display='none';
-    const wrap=document.querySelector('.preview-wrap');
-    if(wrap)wrap.style.display='none';
-    const existing=document.querySelector('.img-picker');
-    if(!existing){
-      const formPhoto=document.getElementById('photoField');
-      formPhoto.insertAdjacentHTML('beforebegin','<div class="img-picker" data-action="pick-photo"><span class="img-picker__icon">📸</span><span class="img-picker__text">点击拍照 / 选择照片</span></div>');
-    }
-    return;
-  }
+  const rb=e.target.closest('[data-action="remove-photo"]');
+  if(rb){document.getElementById('photoField').value='';const pr=document.getElementById('formPreview');pr.src='';pr.style.display='none';const w=document.querySelector('.preview-wrap');if(w)w.style.display='none';const pf=document.getElementById('photoField');if(!document.querySelector('.img-picker'))pf.insertAdjacentHTML('beforebegin','<div class="img-picker" data-action="pick-photo"><span class="img-picker__icon">📸</span><span class="img-picker__text">点击拍照 / 选择照片</span></div>');return}
 
-  // New cuisine/type select — now handled by chip clicks above, remove old select handlers
-  // Price slider label update
+  // Price slider: bounce animation + auto-extend range
   if(e.target.id==='priceSlider'){
-    document.getElementById('priceLabel').textContent=e.target.value;
-    return;
-  }
+    const slider=e.target;
+    const v=parseInt(slider.value);
+    const display=document.getElementById('priceDisplay');
+    const labels=document.getElementById('priceLabels');
 
-  // Get location
-  const locBtn=e.target.closest('[data-action="get-loc"]');
-  if(locBtn){
-    const pos=await getCurrentLocation();
-    if(pos){
-      document.querySelector('input[name="lat"]').value=pos.lat;
-      document.querySelector('input[name="lng"]').value=pos.lng;
-      toast('坐标已获取，请手动填写地址','ok');
+    // Bounce animation
+    if(display){
+      display.textContent=v;
+      display.classList.remove('bounce');
+      void display.offsetWidth;
+      display.classList.add('bounce');
+    }
+
+    // Auto-extend range when user drags to the end
+    const max=parseInt(slider.max);
+    if(v===max&&max<1000){
+      const newMax=max+100;
+      slider.max=newMax;
+      // Update labels
+      if(labels){
+        const step=newMax/5;
+        labels.innerHTML=Array.from({length:6},(_,i)=>`<span>¥${Math.round(i*step)}</span>`).join('');
+      }
+    }
+    // Also shrink range back when value is well below max
+    if(v<max-50&&max>100){
+      const newMax=Math.max(100,max-100);
+      slider.max=newMax;
+      if(labels){
+        const step=newMax/5;
+        labels.innerHTML=Array.from({length:6},(_,i)=>`<span>¥${Math.round(i*step)}</span>`).join('');
+      }
     }
     return;
   }
 });
 
-// ========== FORM HELPERS ==========
-function initFormPreview(){
-  const photo=document.getElementById('photoField').value;
-  if(photo){
-    const preview=document.getElementById('formPreview');
-    preview.style.display='block';preview.src=photo;
-    const picker=document.querySelector('.img-picker');
-    if(picker)picker.style.display='none';
-  }
+// ===== INIT PREVIEW =====
+function initPreview(){
+  const p=document.getElementById('photoField').value;if(p){const pr=document.getElementById('formPreview');pr.style.display='block';pr.src=p;const pk=document.querySelector('.img-picker');if(pk)pk.style.display='none'}
 }
 
-// ========== FORM SUBMIT ==========
+// ===== FORM SUBMIT =====
 document.addEventListener('submit',function(e){
-  const form=e.target.closest('#foodForm');
-  if(!form)return;
+  const ff=e.target.closest('#foodForm');
+  const mf=e.target.closest('#menuForm');
+  if(!ff&&!mf)return;
   e.preventDefault();
 
-  const fd={};form.querySelectorAll('input[name],select[name],textarea[name]').forEach(el=>{fd[el.name]=el.value});
-
-  // Get cuisine from chip select
-  const cuisineChip=document.querySelector('#cuisineChipSelect .chip.active');
-  let cuisine='';
-  if(cuisineChip&&cuisineChip.dataset.val!=='__new__')cuisine=cuisineChip.dataset.val;
-  else if(cuisineChip&&cuisineChip.dataset.val==='__new__')cuisine=fd.newCuisine||'';
-
-  // Get type from chip select
-  const typeChip=document.querySelector('#typeChipSelect .chip.active');
-  let foodType='';
-  if(typeChip&&typeChip.dataset.val!=='__new__')foodType=typeChip.dataset.val;
-  else if(typeChip&&typeChip.dataset.val==='__new__')foodType=fd.newFoodType||'';
-
-  // Get rating tag
-  const ratingChip=document.querySelector('#ratingChips .chip.active');
-  const ratingTag=ratingChip?ratingChip.dataset.rating:'';
-
-  if(!fd.name.trim()){toast('请输入美食名称','err');return}
-
-  const foodData={
-    _id:form.dataset.editId||genId(),
-    name:fd.name.trim(),
-    storeName:fd.storeName||'',
-    placeName:fd.placeName||'',
-    lat:parseFloat(fd.lat)||null,
-    lng:parseFloat(fd.lng)||null,
-    cuisine, foodType,
-    price:parseFloat(fd.price)||0,
-    ratingTag,
-    photo:fd.photo||'',
-    notes:fd.notes||'',
-    createTime:form.dataset.editId?undefined:nowISO(),
-    updateTime:nowISO(),
-  };
-
-  const foods=loadFoods();
-  const isEdit=!!form.dataset.editId;
-
-  if(isEdit){
-    const idx=foods.findIndex(f=>f._id===form.dataset.editId);
-    if(idx>=0){foodData.createTime=foods[idx].createTime;foods[idx]=foodData;}
-  }else{
-    foods.push(foodData);
+  if(ff){
+    const fd={};ff.querySelectorAll('input[name],textarea[name]').forEach(el=>{fd[el.name]=el.value});
+    const cc=document.querySelector('#cuisineChipForm .chip.active');let cuisine='';if(cc&&cc.dataset.val!=='__new__')cuisine=cc.dataset.val;else if(cc&&cc.dataset.val==='__new__')cuisine=fd.newCuisine||'';
+    const tc=document.querySelector('#typeChipForm .chip.active');let foodType='';if(tc&&tc.dataset.val!=='__new__')foodType=tc.dataset.val;else if(tc&&tc.dataset.val==='__new__')foodType=fd.newFoodType||'';
+    const rc=document.querySelector('#ratingChips .chip.active');const ratingTag=rc?rc.dataset.rating:'';
+    if(!fd.name.trim()){toast('请输入美食名称','err');return}
+    const data={_id:ff.dataset.editId||genId(),name:fd.name.trim(),storeName:fd.storeName||'',address:fd.address||'',cuisine,foodType,price:parseFloat(fd.price)||0,ratingTag,photo:fd.photo||'',notes:fd.notes||'',createTime:ff.dataset.editId?undefined:nowISO(),updateTime:nowISO()};
+    const foods=loadFoods();const ei=!!ff.dataset.editId;
+    if(ei){const i=foods.findIndex(f=>f._id===ff.dataset.editId);if(i>=0){data.createTime=foods[i].createTime;foods[i]=data}}else foods.push(data);
+    saveFoods(foods);if(cuisine&&!getCuisineList().includes(cuisine))filters.cuisine='全部';if(foodType&&!getTypeList().includes(foodType))filters.type='全部';
+    toast(ei?'已更新！':'美食已记录！🍜','ok');closeModal();renderAll();
   }
 
-  saveFoods(foods);
-  // Reset filters to show new items
-  if(cuisine&&!getCuisineList().includes(cuisine))filters.cuisine='全部';
-  if(foodType&&!getTypeList().includes(foodType))filters.type='全部';
-
-  toast(isEdit?'已更新！':'美食已记录！🍜','ok');
-  closeModal();
-  renderAll();
+  if(mf){
+    const fd={};mf.querySelectorAll('input[name],textarea[name]').forEach(el=>{fd[el.name]=el.value});
+    const cc=document.querySelector('#cuisineChipForm .chip.active');let cuisine='';if(cc&&cc.dataset.val!=='__new__')cuisine=cc.dataset.val;else if(cc&&cc.dataset.val==='__new__')cuisine=fd.newCuisine||'';
+    const tc=document.querySelector('#typeChipForm .chip.active');let foodType='';if(tc&&tc.dataset.val!=='__new__')foodType=tc.dataset.val;else if(tc&&tc.dataset.val==='__new__')foodType=fd.newFoodType||'';
+    if(!fd.storeName.trim()){toast('请输入餐厅名称','err');return}
+    const data={_id:mf.dataset.editId||genId(),storeName:fd.storeName.trim(),address:fd.address||'',cuisine,foodType,photo:fd.photo||'',notes:fd.notes||'',createTime:mf.dataset.editId?undefined:nowISO(),updateTime:nowISO()};
+    const menus=loadMenus();const ei=!!mf.dataset.editId;
+    if(ei){const i=menus.findIndex(m=>m._id===mf.dataset.editId);if(i>=0){data.createTime=menus[i].createTime;menus[i]=data}}else menus.push(data);
+    saveMenus(menus);toast(ei?'已更新！':'菜单已保存！📋','ok');closeModal();renderAll();
+  }
 });
 
-// ========== WINDOW RESIZE (re-render for grid) ==========
-let resizeTimer;
-window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderFoodList,200)});
+// ===== RESIZE =====
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(renderAll,200)});
 
-// ========== BOOTSTRAP ==========
+// ===== BOOTSTRAP =====
 renderAll();
-console.log('%c🍜 EatWhat %cv1.0','font-size:20px;color:#FF6B35;font-weight:bold','color:#8B7E74');
+console.log('%c🍜 EatWhat %cv2.0','font-size:20px;color:#FF6B35;font-weight:bold','color:#8B7E74');
 </script>
 </body>
 </html>
