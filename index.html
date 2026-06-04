@@ -98,14 +98,14 @@ img{max-width:100%}
 .form-textarea{resize:vertical;min-height:72px;line-height:1.6}
 
 /* PRICE */
-.price-display{text-align:center;font-size:2.6rem;font-weight:900;color:#FF6B35;padding:4px 0 2px;font-variant-numeric:tabular-nums;display:inline-block}
-.price-display::before{content:'¥';font-size:1.6rem;vertical-align:top;margin-right:2px}
-.price-display.pop{animation:pricePop 0.3s cubic-bezier(0.34,1.56,0.64,1)}
-@keyframes pricePop{0%{transform:scale(1)}30%{transform:scale(1.15)}60%{transform:scale(0.92)}100%{transform:scale(1)}}
-input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(to right,#FF6B35,#FF8C42);outline:none;margin:6px 0;touch-action:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:36px;height:36px;border-radius:50%;background:#fff;border:3px solid #FF6B35;box-shadow:0 2px 8px rgba(255,107,53,0.25);cursor:pointer}
-input[type=range]::-webkit-slider-thumb:active{transform:scale(1.15)}
-.price-labels{display:flex;justify-content:space-between;font-size:0.68rem;color:#C4B5AA;margin-top:2px}
+.price-display{text-align:center;font-size:2.6rem;font-weight:900;color:#FF6B35;padding:8px 0 2px;font-variant-numeric:tabular-nums;display:block;transition:transform 0.15s ease-out}
+.price-display::before{content:'¥';font-size:1.6rem;vertical-align:top;margin-right:4px}
+.price-display.pop{animation:pricePop 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes pricePop{0%{transform:scale(1)}40%{transform:scale(1.2)}65%{transform:scale(0.9)}100%{transform:scale(1)}}
+input[type=range]{-webkit-appearance:none;width:100%;height:10px;border-radius:5px;background:linear-gradient(to right,#FF6B35,#FF8C42);outline:none;margin:10px 0;touch-action:none;cursor:pointer;transition:opacity 0.1s}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:40px;height:40px;border-radius:50%;background:#fff;border:3px solid #FF6B35;box-shadow:0 3px 12px rgba(255,107,53,0.3);cursor:pointer;transition:transform 0.12s ease-out,box-shadow 0.12s ease-out}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);box-shadow:0 4px 20px rgba(255,107,53,0.45)}
+.price-labels{display:flex;justify-content:space-between;font-size:0.68rem;color:#C4B5AA;margin-top:2px;padding:0 2px}
 
 /* IMAGE PICKER */
 .img-picker{border:2px dashed #E8DDD5;border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 0.12s;background:#FDF8F5}
@@ -137,8 +137,9 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.15)}
 .confirm-box .btn-row{display:flex;gap:8px;justify-content:center}
 
 /* MAP BUTTON */
-.map-hint{display:flex;align-items:center;gap:6px;font-size:0.78rem;color:#FF6B35;font-weight:600;margin-top:6px}
+.map-hint{display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#FF6B35;font-weight:600;margin-top:6px;cursor:pointer;padding:10px 14px;background:#FFF5EE;border-radius:12px;border:1px dashed #FF6B35}
 .map-hint::before{content:'🗺️'}
+.map-hint:active{background:#FFE8D6}
 </style>
 </head>
 <body>
@@ -239,53 +240,37 @@ function pickPhoto(){
   });
 }
 
-// Open native map app (Amap/Gaode, Baidu, Apple Maps, Google Maps)
+// Open native Amap (高德地图) to pick a place
 function openMapForPick(){
   const ua=navigator.userAgent;
   const isIOS=/iPhone|iPad|iPod/i.test(ua);
-  const isAndroid=/Android/i.test(ua);
-  const isWeChat=/MicroMessenger/i.test(ua);
 
-  // Build a geo: URI that triggers native map apps
-  let fallbackUrl='';
-
-  // Try to get current position for nearby search
-  const tryNearby=(lat,lng)=>{
-    let url='';
-    const locStr=`${lat},${lng}`;
-
-    if(isWeChat){
-      // WeChat: use Tencent map URI (opens native WeChat map or user's default)
-      url=`https://apis.map.qq.com/uri/v1/search?keyword=餐厅&center=${locStr}&radius=3000&referer=EatWhat`;
-    }else if(isIOS){
-      // iOS: Apple Maps search nearby restaurants
-      url=`https://maps.apple.com/?q=餐厅&ll=${locStr}`;
-    }else if(isAndroid){
-      // Android: use geo intent with label, then google maps fallback
-      // First try geo URI — many Android devices will offer Amap/Baidu/Google as options
-      url=`https://www.google.com/maps/search/餐厅/@${locStr},15z`;
-    }else{
-      url=`https://www.google.com/maps/search/?api=1&query=餐厅`;
-    }
-    window.open(url,'_blank');
-  };
-
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      pos=>{tryNearby(pos.coords.latitude,pos.coords.longitude)},
-      ()=>{
-        // Fallback: open generic map search
-        if(isWeChat)window.open('https://apis.map.qq.com/uri/v1/search?keyword=餐厅&referer=EatWhat','_blank');
-        else if(isIOS)window.open('https://maps.apple.com/?q=餐厅','_blank');
-        else window.open('https://www.google.com/maps/search/?api=1&query=餐厅','_blank');
-      },
-      {timeout:5000,enableHighAccuracy:false}
-    );
+  if(isIOS){
+    // iOS: Apple Maps as fallback (can't directly open Amap via URL scheme reliably)
+    window.open('https://maps.apple.com/?q=餐厅','_blank');
   }else{
-    if(isIOS)window.open('https://maps.apple.com/?q=餐厅','_blank');
-    else window.open('https://www.google.com/maps/search/?api=1&query=餐厅','_blank');
+    // Android: Try Amap URI scheme first, fallback to Google Maps
+    // amapuri://search?keyword=餐厅&sourceApplication=EatWhat
+    const amapUrl='amapuri://search?keyword=餐厅&sourceApplication=EatWhat';
+    const googleUrl='https://www.google.com/maps/search/?api=1&query=餐厅';
+
+    // Try opening Amap
+    const start=new Date().getTime();
+    const iframe=document.createElement('iframe');
+    iframe.style.display='none';
+    iframe.src=amapUrl;
+    document.body.appendChild(iframe);
+
+    setTimeout(()=>{
+      document.body.removeChild(iframe);
+      // If Amap didn't open within 800ms, fallback to Google Maps
+      if(new Date().getTime()-start<1000){
+        window.open(googleUrl,'_blank');
+      }
+    },800);
   }
-  toast('在地图App中选择店铺后，回来粘贴地址','info');
+
+  toast('在高德地图中选择店铺 → 复制地址 → 粘贴回来','info');
 }
 
 function getCuisineList(){const s=new Set(loadFoods().map(f=>f.cuisine).filter(Boolean));return['全部',...Array.from(s).sort()]}
@@ -353,7 +338,7 @@ function makeFoodForm(food){
     ${photoHtml}<input type="hidden" name="photo" value="${food&&food.photo?food.photo:''}" id="photoField">
     <div class="form-group"><label class="form-label">🍜 美食名称</label><input class="form-input" name="name" value="${food?esc(food.name):''}" placeholder="比如：招牌豚骨拉面" required></div>
     <div class="form-group"><label class="form-label">🏪 店名</label><input class="form-input" name="storeName" value="${food?esc(food.storeName||''):''}" placeholder="在哪家店吃的？" list="ss"><datalist id="ss"></datalist></div>
-    <div class="form-group"><label class="form-label">📍 地址</label><input class="form-input" name="address" value="${food?esc(food.address||''):''}" placeholder="输入地址，或点击下方打开地图搜索"><div class="map-hint" style="cursor:pointer" data-action="pick-map">🗺️ 打开地图搜索附近店铺</div><div style="font-size:0.7rem;color:#C4B5AA;margin-top:4px">地图中找到店铺后，复制地址粘贴回上方</div></div>
+    <div class="form-group"><label class="form-label">📍 地址</label><input class="form-input" name="address" value="${food?esc(food.address||''):''}" placeholder="输入地址，或点击下方打开高德地图选择"><div class="map-hint" data-action="pick-map">🗺️ 打开高德地图选择店铺</div><div style="font-size:0.7rem;color:#C4B5AA;margin-top:6px">高德中找到店铺 → 复制地址 → 粘贴回上方输入框</div></div>
     <div class="form-group"><label class="form-label">💰 价格</label><div class="price-display" id="priceDisplay">${food?food.price||'0':''}</div><input type="range" name="price" min="0" max="${Math.max(100,Math.ceil(((food?.price||0)+50)/100)*100)}" step="1" value="${food?food.price||'0':'0'}" id="priceSlider"><div class="price-labels" id="priceLabels"></div></div>
     <div class="form-group"><label class="form-label">🍳 菜系</label><div class="chips-row" id="cf2">${cuisines.map(c=>`<span class="chip${food&&food.cuisine===c?' active':''}" data-select="cuisine" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="cuisine" data-val="__new__">＋</span></div><div id="ncg" style="display:none;margin-top:6px"><input class="form-input" name="newCuisine" placeholder="新菜系名称"></div></div>
     <div class="form-group"><label class="form-label">🍽️ 类型</label><div class="chips-row" id="tf2">${types.map(c=>`<span class="chip${food&&food.foodType===c?' active':''}" data-select="type" data-val="${esc(c)}">${esc(c)}</span>`).join('')}<span class="chip chip--new" data-select="type" data-val="__new__">＋</span></div><div id="ntg" style="display:none;margin-top:6px"><input class="form-input" name="newFoodType" placeholder="新类型名称"></div></div>
@@ -432,22 +417,23 @@ document.addEventListener('click',function(e){
   if(mp){openMapForPick();return}
 });
 
-// ========== INPUT EVENT — price slider real-time with pop animation ==========
+// ========== INPUT EVENT — smooth price slider ==========
 document.addEventListener('input',function(e){
   if(e.target.id==='priceSlider'){
     const slider=e.target;const v=parseInt(slider.value);
     const display=document.getElementById('priceDisplay');
     if(display){
-      // Trigger pop animation on every change
       display.textContent=v;
       display.classList.remove('pop');
-      void display.offsetWidth; // force reflow
+      void display.offsetWidth;
       display.classList.add('pop');
     }
-    // Auto-extend range when near max
+    // Auto-extend range when dragging near max
     const max=parseInt(slider.max);
-    if(v>=max-3&&max<2000){slider.max=max+100;updatePriceLabels(slider)}
-    if(v<max-60&&max>100){const newMax=Math.max(100,max-100);if(newMax>=v+20){slider.max=newMax;updatePriceLabels(slider)}}
+    // Expand when within 8 units of max
+    if(v>=max-8&&max<2000){const newMax=max+100;slider.max=newMax;updatePriceLabels(slider)}
+    // Shrink back when value is far below max
+    if(v<max-80&&max>120){const newMax=Math.max(100,max-100);slider.max=newMax;updatePriceLabels(slider)}
   }
 });
 
