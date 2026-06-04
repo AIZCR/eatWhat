@@ -115,7 +115,6 @@ input,select,textarea{font-size:16px;color:#4A3028}
 }
 .tag--cuisine{background:#FFF0E5;color:#FF8C42}
 .tag--type{background:#E8F5E9;color:#4CAF50}
-.tag--scene{background:#F3E5F5;color:#9C27B0}
 .tag--rating{background:#FFF9E6;color:#F5A623}
 .tag--must{background:#FFE8E0;color:#E64A19}
 .tag--mid{background:#FFF8E1;color:#F9A825}
@@ -294,10 +293,6 @@ input,select,textarea{font-size:16px;color:#4A3028}
       <div class="chips-title">🍽️ 类型</div>
       <div class="chips-row" id="typeChips"></div>
     </div>
-    <div class="chips-section" id="sceneFilters">
-      <div class="chips-title">🎯 场景</div>
-      <div class="chips-row" id="sceneChips"></div>
-    </div>
   </div>
 
   <!-- Food cards -->
@@ -322,9 +317,8 @@ input,select,textarea{font-size:16px;color:#4A3028}
 
 <script>
 // ========== CONSTANTS ==========
-const CUISINES = ['川菜','湘菜','粤菜','闽菜','苏菜','浙菜','徽菜','鲁菜','日料','韩餐','西餐','火锅','烧烤','小吃','甜品','饮品','面馆','早点','卤味','其他'];
+const CUISINES = ['火锅','烧烤','自助餐','川菜','湘菜','粤菜','日料','韩餐','西餐','小吃','甜品','饮品','面馆','早点','其他'];
 const FOOD_TYPES = ['正餐','小吃','甜品','饮品','早餐','夜宵','下午茶','Brunch','外卖','自助'];
-const FOOD_SCENES = ['一人食','朋友聚餐','约会','家庭聚餐','商务宴请','路边摊','外卖到家','深夜食堂'];
 const RATING_TAGS = ['必吃','推荐','一般','踩雷','惊艳'];
 const STORE_KEY = 'eatwhat_foods';
 
@@ -439,7 +433,7 @@ function pickPhoto(){
   });
 }
 
-// ========== LOCATION — reverse geocode to readable address ==========
+// ========== LOCATION — GPS + manual address ==========
 function getCurrentLocation(){
   return new Promise(resolve=>{
     if(!navigator.geolocation){
@@ -447,78 +441,15 @@ function getCurrentLocation(){
     }
     toast('正在获取位置...','info');
     navigator.geolocation.getCurrentPosition(
-      async pos=>{
+      pos=>{
         const{latitude,longitude}=pos.coords;
-        // Try reverse geocode to get readable address
-        try{
-          const resp=await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=zh`,
-            {headers:{'User-Agent':'EatWhat-App'}}
-          );
-          if(!resp.ok)throw new Error('geocode failed');
-          const data=await resp.json();
-          const addr=data.address||{};
-          const displayName=data.display_name||'';
-
-          // Chinese address: build most useful readable name
-          // Priority: POI/business name > 商场/商圈 > road > district > city
-          let placeName='';
-
-          // Level 1: specific POI / business / mall / shop name
-          if(data.name&&data.name!==addr.road&&data.name!==addr.house_number){
-            placeName=data.name;
-          }
-
-          // Level 2: shopping mall / commercial district / landmark
-          const commercialAreas=[
-            addr.commercial,addr.retail,addr.industrial,
-            addr.marketplace,addr.shopping_mall,
-            addr.square,addr.plaza,addr.mall
-          ].filter(Boolean);
-          if(!placeName&&commercialAreas.length>0){
-            placeName=commercialAreas[0];
-          }
-
-          // Level 3: Build structured Chinese address (省→市→区→街道→门牌)
-          if(!placeName){
-            const structured=[];
-            // Province
-            if(addr.state)structured.push(addr.state);
-            // City
-            if(addr.city)structured.push(addr.city);
-            else if(addr.town)structured.push(addr.town);
-            // District/County
-            if(addr.county)structured.push(addr.county);
-            else if(addr.district)structured.push(addr.district);
-            // Suburb/Neighbourhood
-            if(addr.suburb)structured.push(addr.suburb);
-            else if(addr.neighbourhood)structured.push(addr.neighbourhood);
-            else if(addr.village)structured.push(addr.village);
-            // Road + house number
-            let roadPart='';
-            if(addr.road)roadPart=addr.road;
-            if(addr.house_number)roadPart+=addr.house_number+'号';
-            if(roadPart)structured.push(roadPart);
-
-            placeName=structured.join('，');
-          }
-
-          // Final fallback
-          if(!placeName||placeName.length<3){
-            placeName=displayName.split(',')[0]||displayName;
-          }
-
-          resolve({
-            lat:latitude,lng:longitude,
-            name:placeName.slice(0,80),
-            full:displayName
-          });
-          toast('已获取：'+placeName.slice(0,24)+(placeName.length>24?'…':''),'ok');
-        }catch{
-          // Fallback: just use coordinates as string
-          resolve({lat:latitude,lng:longitude,name:`${latitude.toFixed(5)},${longitude.toFixed(5)}`,full:''});
-          toast('已获取坐标','ok');
-        }
+        // Just get coordinates; user fills in the readable address
+        resolve({
+          lat:latitude,lng:longitude,
+          name:`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`,
+          full:''
+        });
+        toast('已获取坐标，请填写地址名称','ok');
       },
       err=>{
         toast('定位失败：'+(err.message||'请检查定位权限'),'err');
@@ -544,18 +475,15 @@ function openMap(lat,lng,name){
 }
 
 // ========== RENDER ==========
-const filters={cuisine:'全部',type:'全部',scene:'全部'};
+const filters={cuisine:'全部',type:'全部'};
 
 function getCuisineList(){const s=new Set(loadFoods().map(f=>f.cuisine).filter(Boolean));return['全部',...Array.from(s).sort()]}
 function getTypeList(){const s=new Set(loadFoods().map(f=>f.foodType).filter(Boolean));return['全部',...Array.from(s).sort()]}
-function getSceneList(){const s=new Set(loadFoods().map(f=>f.scene).filter(Boolean));return['全部',...Array.from(s).sort()]}
-
 function getFilteredFoods(){
   let foods=loadFoods();
   foods.sort((a,b)=>new Date(b.createTime)-new Date(a.createTime));
   if(filters.cuisine!=='全部')foods=foods.filter(f=>f.cuisine===filters.cuisine);
   if(filters.type!=='全部')foods=foods.filter(f=>f.foodType===filters.type);
-  if(filters.scene!=='全部')foods=foods.filter(f=>f.scene===filters.scene);
   return foods;
 }
 
@@ -579,14 +507,13 @@ function renderChips(containerId,list,current,filterKey){
 function renderAllFilters(){
   renderChips('cuisineChips',getCuisineList(),filters.cuisine,'cuisine');
   renderChips('typeChips',getTypeList(),filters.type,'type');
-  renderChips('sceneChips',getSceneList(),filters.scene,'scene');
 }
 
 function renderFoodList(){
   const foods=getFilteredFoods();
   const container=document.getElementById('foodList');
   if(foods.length===0){
-    const hasFilter=filters.cuisine!=='全部'||filters.type!=='全部'||filters.scene!=='全部';
+    const hasFilter=filters.cuisine!=='全部'||filters.type!=='全部';
     container.innerHTML=`<div class="empty-state">
       <div class="empty-state__icon">${hasFilter?'🔍':'🍽️'}</div>
       <div class="empty-state__title">${hasFilter?'没有匹配的记录':'还没有美食记录'}</div>
@@ -608,7 +535,6 @@ function renderFoodCard(f){
   const tags=[];
   if(f.cuisine)tags.push(`<span class="tag tag--cuisine">${esc(f.cuisine)}</span>`);
   if(f.foodType)tags.push(`<span class="tag tag--type">${esc(f.foodType)}</span>`);
-  if(f.scene)tags.push(`<span class="tag tag--scene">${esc(f.scene)}</span>`);
   if(f.ratingTag){
     const rc={'必吃':'tag--must','推荐':'tag--rating','一般':'tag--mid','踩雷':'tag--bad','惊艳':'tag--must'};
     tags.push(`<span class="tag ${rc[f.ratingTag]||'tag--rating'}">${esc(f.ratingTag)}</span>`);
@@ -654,9 +580,6 @@ function makeFormHtml(food){
   const id=food?food._id:'';
   const cuisines=getCuisineList().filter(c=>c!=='全部');
   const types=getTypeList().filter(c=>c!=='全部');
-  const scenes=getSceneList().filter(c=>c!=='全部');
-
-  const selOpts=(list,selected)=>list.map(c=>`<option value="${esc(c)}" ${c===selected?'selected':''}>${esc(c)}</option>`).join('');
 
   const photoHtml=food&&food.photo
     ?`<div class="preview-wrap"><img src="${food.photo}" class="preview-img" id="formPreview"><button class="preview-remove" data-action="remove-photo">✕</button></div>`
@@ -682,48 +605,39 @@ function makeFormHtml(food){
 
     <div class="form-group"><label class="form-label">📍 位置</label>
       <div class="form-inline">
-        <input class="form-input" name="placeName" value="${food?esc(food.placeName||''):''}" placeholder="自动获取或手动输入地址" style="flex:1">
-        <button type="button" class="btn btn--primary btn--sm" data-action="get-loc" style="flex-shrink:0">📍 定位</button>
+        <input class="form-input" name="placeName" value="${food?esc(food.placeName||''):''}" placeholder="输入地址，如：湖北省武汉市蔡甸区经开万达" style="flex:1">
+        <button type="button" class="btn btn--primary btn--sm" data-action="get-loc" style="flex-shrink:0">📍</button>
       </div>
+      <div style="font-size:0.75rem;color:#C4B5AA;margin-top:4px">点击右侧按钮获取坐标，手动填写地址名称</div>
       <input type="hidden" name="lat" value="${food?food.lat||'':''}">
       <input type="hidden" name="lng" value="${food?food.lng||'':''}">
     </div>
 
-    <div class="form-group"><label class="form-label">💰 价格 (¥)</label>
-      <input class="form-input" name="price" type="number" step="0.01" value="${food?food.price||'':''}" placeholder="比如：48">
+    <div class="form-group"><label class="form-label">💰 价格 <span class="hint">(¥<span id="priceLabel">${food?food.price||'0':''}</span>)</span></label>
+      <input type="range" name="price" min="0" max="500" step="1" value="${food?food.price||'0':''}" style="width:100%;height:24px;accent-color:#FF6B35;margin-top:4px" id="priceSlider">
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#C4B5AA;margin-top:2px">
+        <span>¥0</span><span>¥100</span><span>¥200</span><span>¥300</span><span>¥400</span><span>¥500</span>
+      </div>
     </div>
 
     <div class="form-group"><label class="form-label">🍳 菜系</label>
-      <select class="form-select" name="cuisine">
-        <option value="">选择菜系...</option>
-        <option value="__new__" style="color:#FF6B35">＋ 添加新菜系</option>
-        ${selOpts(cuisines,food?food.cuisine:'')}
-      </select>
-    </div>
-    <div class="form-group" id="newCuisineGroup" style="display:none">
-      <input class="form-input" name="newCuisine" placeholder="输入新菜系名称">
+      <div class="chips-row" id="cuisineChipSelect">
+        ${cuisines.map(c=>`<span class="chip${food&&food.cuisine===c?' active':''}" data-select="cuisine" data-val="${esc(c)}">${esc(c)}</span>`).join('')}
+        <span class="chip chip--new" data-select="cuisine" data-val="__new__">＋ 添加</span>
+      </div>
+      <div id="newCuisineGroup" style="display:none;margin-top:8px">
+        <input class="form-input" name="newCuisine" placeholder="输入新菜系名称">
+      </div>
     </div>
 
     <div class="form-group"><label class="form-label">🍽️ 类型</label>
-      <select class="form-select" name="foodType">
-        <option value="">选择类型...</option>
-        <option value="__new__" style="color:#FF6B35">＋ 添加新类型</option>
-        ${selOpts(types,food?food.foodType:'')}
-      </select>
-    </div>
-    <div class="form-group" id="newTypeGroup" style="display:none">
-      <input class="form-input" name="newFoodType" placeholder="输入新类型名称">
-    </div>
-
-    <div class="form-group"><label class="form-label">🎯 场景</label>
-      <select class="form-select" name="scene">
-        <option value="">选择场景...</option>
-        <option value="__new__" style="color:#FF6B35">＋ 添加新场景</option>
-        ${selOpts(scenes,food?food.scene:'')}
-      </select>
-    </div>
-    <div class="form-group" id="newSceneGroup" style="display:none">
-      <input class="form-input" name="newScene" placeholder="输入新场景名称">
+      <div class="chips-row" id="typeChipSelect">
+        ${types.map(c=>`<span class="chip${food&&food.foodType===c?' active':''}" data-select="type" data-val="${esc(c)}">${esc(c)}</span>`).join('')}
+        <span class="chip chip--new" data-select="type" data-val="__new__">＋ 添加</span>
+      </div>
+      <div id="newTypeGroup" style="display:none;margin-top:8px">
+        <input class="form-input" name="newFoodType" placeholder="输入新类型名称">
+      </div>
     </div>
 
     <div class="form-group"><label class="form-label">⭐ 评价</label>
@@ -762,6 +676,29 @@ document.addEventListener('click',async function(e){
   if(ratingChip){
     ratingChip.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
     ratingChip.classList.add('active');
+    return;
+  }
+
+  // Cuisine/Type select chips in form
+  const selectChip=e.target.closest('.chip[data-select]');
+  if(selectChip){
+    const key=selectChip.dataset.select;
+    const val=selectChip.dataset.val;
+    if(val==='__new__'){
+      // Show new input
+      const newGroup=document.getElementById(key==='cuisine'?'newCuisineGroup':'newTypeGroup');
+      if(newGroup)newGroup.style.display='block';
+      // Deselect any active chip
+      selectChip.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      selectChip.classList.add('active');
+      return;
+    }
+    // Hide new input if visible
+    const newGroup=document.getElementById(key==='cuisine'?'newCuisineGroup':'newTypeGroup');
+    if(newGroup)newGroup.style.display='none';
+    // Toggle: deselect others, select this
+    selectChip.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    selectChip.classList.add('active');
     return;
   }
 
@@ -840,22 +777,21 @@ document.addEventListener('click',async function(e){
     return;
   }
 
-  // New cuisine/type/scene select
-  if(e.target.name==='cuisine'&&e.target.value==='__new__'){document.getElementById('newCuisineGroup').style.display='block';return}
-  if(e.target.name==='cuisine'){document.getElementById('newCuisineGroup').style.display='none';return}
-  if(e.target.name==='foodType'&&e.target.value==='__new__'){document.getElementById('newTypeGroup').style.display='block';return}
-  if(e.target.name==='foodType'){document.getElementById('newTypeGroup').style.display='none';return}
-  if(e.target.name==='scene'&&e.target.value==='__new__'){document.getElementById('newSceneGroup').style.display='block';return}
-  if(e.target.name==='scene'){document.getElementById('newSceneGroup').style.display='none';return}
+  // New cuisine/type select — now handled by chip clicks above, remove old select handlers
+  // Price slider label update
+  if(e.target.id==='priceSlider'){
+    document.getElementById('priceLabel').textContent=e.target.value;
+    return;
+  }
 
   // Get location
   const locBtn=e.target.closest('[data-action="get-loc"]');
   if(locBtn){
     const pos=await getCurrentLocation();
     if(pos){
-      document.querySelector('input[name="placeName"]').value=pos.name;
       document.querySelector('input[name="lat"]').value=pos.lat;
       document.querySelector('input[name="lng"]').value=pos.lng;
+      toast('坐标已获取，请手动填写地址','ok');
     }
     return;
   }
@@ -880,10 +816,17 @@ document.addEventListener('submit',function(e){
 
   const fd={};form.querySelectorAll('input[name],select[name],textarea[name]').forEach(el=>{fd[el.name]=el.value});
 
-  // Resolve new values
-  let cuisine=fd.cuisine==='__new__'?(fd.newCuisine||''):(fd.cuisine||'');
-  let foodType=fd.foodType==='__new__'?(fd.newFoodType||''):(fd.foodType||'');
-  let scene=fd.scene==='__new__'?(fd.newScene||''):(fd.scene||'');
+  // Get cuisine from chip select
+  const cuisineChip=document.querySelector('#cuisineChipSelect .chip.active');
+  let cuisine='';
+  if(cuisineChip&&cuisineChip.dataset.val!=='__new__')cuisine=cuisineChip.dataset.val;
+  else if(cuisineChip&&cuisineChip.dataset.val==='__new__')cuisine=fd.newCuisine||'';
+
+  // Get type from chip select
+  const typeChip=document.querySelector('#typeChipSelect .chip.active');
+  let foodType='';
+  if(typeChip&&typeChip.dataset.val!=='__new__')foodType=typeChip.dataset.val;
+  else if(typeChip&&typeChip.dataset.val==='__new__')foodType=fd.newFoodType||'';
 
   // Get rating tag
   const ratingChip=document.querySelector('#ratingChips .chip.active');
@@ -898,7 +841,7 @@ document.addEventListener('submit',function(e){
     placeName:fd.placeName||'',
     lat:parseFloat(fd.lat)||null,
     lng:parseFloat(fd.lng)||null,
-    cuisine, foodType, scene,
+    cuisine, foodType,
     price:parseFloat(fd.price)||0,
     ratingTag,
     photo:fd.photo||'',
@@ -921,7 +864,6 @@ document.addEventListener('submit',function(e){
   // Reset filters to show new items
   if(cuisine&&!getCuisineList().includes(cuisine))filters.cuisine='全部';
   if(foodType&&!getTypeList().includes(foodType))filters.type='全部';
-  if(scene&&!getSceneList().includes(scene))filters.scene='全部';
 
   toast(isEdit?'已更新！':'美食已记录！🍜','ok');
   closeModal();
