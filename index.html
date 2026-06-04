@@ -466,8 +466,8 @@ document.addEventListener('input',function(e){
     }
     // Auto-extend range when dragging near max
     const max=parseInt(slider.max);
-    // Expand when within 8 units of max
-    if(v>=max-8&&max<2000){const newMax=max+100;slider.max=newMax;updatePriceLabels(slider)}
+    // Expand only when slider is pulled to the very top
+    if(v===max&&max<2000){const newMax=max+100;slider.max=newMax;updatePriceLabels(slider)}
     // Shrink back when value is far below max
     if(v<max-80&&max>120){const newMax=Math.max(100,max-100);slider.max=newMax;updatePriceLabels(slider)}
   }
