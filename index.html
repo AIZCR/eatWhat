@@ -138,7 +138,6 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);box-shadow:0
 
 /* MAP BUTTON */
 .map-hint{display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#FF6B35;font-weight:600;margin-top:6px;cursor:pointer;padding:10px 14px;background:#FFF5EE;border-radius:12px;border:1px dashed #FF6B35}
-.map-hint::before{content:'🗺️'}
 .map-hint:active{background:#FFE8D6}
 </style>
 </head>
@@ -240,37 +239,74 @@ function pickPhoto(){
   });
 }
 
-// Open native Amap (高德地图) to pick a place
+// Open native AMap (高德地图) app via URL scheme
 function openMapForPick(){
   const ua=navigator.userAgent;
   const isIOS=/iPhone|iPad|iPod/i.test(ua);
+  const isAndroid=/Android/i.test(ua);
 
-  if(isIOS){
-    // iOS: Apple Maps as fallback (can't directly open Amap via URL scheme reliably)
-    window.open('https://maps.apple.com/?q=餐厅','_blank');
-  }else{
-    // Android: Try Amap URI scheme first, fallback to Google Maps
+  if(isAndroid){
+    // Android: try to open Amap app directly via intent URI scheme
     // amapuri://search?keyword=餐厅&sourceApplication=EatWhat
-    const amapUrl='amapuri://search?keyword=餐厅&sourceApplication=EatWhat';
-    const googleUrl='https://www.google.com/maps/search/?api=1&query=餐厅';
+    // Also try geo: intent to cover cases where Amap isn't installed
+    const amapIntent = 'intent://search?keyword=%E9%A4%90%E5%8E%85#Intent;scheme=amapuri;package=com.autonavi.minimap;S.browser_fallback_url='+encodeURIComponent('https://uri.amap.com/search?keyword=餐厅');
+    const amapUri = 'amapuri://search?keyword=%E9%A4%90%E5%8E%85&sourceApplication=EatWhat';
 
-    // Try opening Amap
-    const start=new Date().getTime();
-    const iframe=document.createElement('iframe');
-    iframe.style.display='none';
-    iframe.src=amapUrl;
+    // Use a hidden iframe to try the scheme, with timeout fallback
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
     document.body.appendChild(iframe);
 
-    setTimeout(()=>{
+    let opened = false;
+    const handleBlur = () => { opened = true; };
+
+    window.addEventListener('blur', handleBlur, { once: true });
+
+    // Try amapuri:// first
+    try {
+      window.location.href = amapUri;
+    } catch(e) {}
+
+    setTimeout(() => {
+      window.removeEventListener('blur', handleBlur);
       document.body.removeChild(iframe);
-      // If Amap didn't open within 800ms, fallback to Google Maps
-      if(new Date().getTime()-start<1000){
-        window.open(googleUrl,'_blank');
+      // If app didn't open, navigate to Amap web fallback
+      if (!opened) {
+        window.open('https://uri.amap.com/search?keyword=%E9%A4%90%E5%8E%85', '_blank');
       }
-    },800);
+    }, 1500);
+
+  } else if(isIOS){
+    // iOS: try Amap URL scheme, fallback to Apple Maps
+    const amapIosUrl = 'iosamap://poi?keyword=%E9%A4%90%E5%8E%85&sourceApplication=EatWhat';
+    const appleMapsUrl = 'https://maps.apple.com/?q=%E9%A4%90%E5%8E%85';
+
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    let opened = false;
+    const handleBlur = () => { opened = true; };
+    window.addEventListener('blur', handleBlur, { once: true });
+
+    try {
+      window.location.href = amapIosUrl;
+    } catch(e) {}
+
+    setTimeout(() => {
+      window.removeEventListener('blur', handleBlur);
+      document.body.removeChild(iframe);
+      if (!opened) {
+        window.open(appleMapsUrl, '_blank');
+      }
+    }, 1500);
+
+  } else {
+    // Desktop / other: open Amap web version
+    window.open('https://uri.amap.com/search?keyword=%E9%A4%90%E5%8E%85', '_blank');
   }
 
-  toast('在高德地图中选择店铺 → 复制地址 → 粘贴回来','info');
+  toast('高德地图中找到店铺 → 复制地址 → 粘贴回来','info');
 }
 
 function getCuisineList(){const s=new Set(loadFoods().map(f=>f.cuisine).filter(Boolean));return['全部',...Array.from(s).sort()]}
