@@ -501,19 +501,28 @@ document.addEventListener('input',function(e){
     if(pos===100&&dataMax<1000&&!_priceLockTimer){
       const newMax=dataMax+100;
       slider.dataset.max=newMax;
-      // Lock slider so user can't fight the snap
       slider.disabled=true;
       _priceLockTimer=setTimeout(()=>{
         slider.disabled=false;
-        // Snap into the high-precision ¥100 zone: pos=90
-        slider.value=90;
-        const p2=Math.round(posToPrice(90,newMax));
+        // Snap to start of new ¥100 zone: pos=50 → price = newMax-100 (old max)
+        slider.value=50;
+        const p2=Math.round(posToPrice(50,newMax));
         if(display)display.textContent=p2;
         if(hidden)hidden.value=p2;
         slider.dataset.price=p2;
         updatePriceLabels(slider);
         _priceLockTimer=null;
       },350);
+      updatePriceLabels(slider);
+      return;
+    }
+
+    // === Shrink: dragged back below previous tier boundary ===
+    if(pos<50&&dataMax>100&&!_priceLockTimer){
+      const newMax=dataMax-100;
+      const newPos=priceToPos(price,newMax);
+      slider.dataset.max=newMax;
+      slider.value=Math.round(newPos);
       updatePriceLabels(slider);
       return;
     }
