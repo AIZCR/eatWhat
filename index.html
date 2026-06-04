@@ -457,24 +457,63 @@ function getCurrentLocation(){
           );
           if(!resp.ok)throw new Error('geocode failed');
           const data=await resp.json();
-          // Extract meaningful address parts
           const addr=data.address||{};
           const displayName=data.display_name||'';
-          // Build a readable name
-          const parts=[];
-          if(addr.road)parts.push(addr.road);
-          if(addr.house_number)parts[parts.length-1]=addr.road+addr.house_number+'号';
-          if(addr.suburb||addr.neighbourhood)parts.push(addr.suburb||addr.neighbourhood);
-          if(addr.city||addr.town||addr.county)parts.push(addr.city||addr.town||addr.county);
-          if(addr.state)parts.push(addr.state);
-          // Fallback to short display name
-          const placeName=parts.length>=2?parts.join('，'):(displayName.split(',')[0]||displayName);
+
+          // Chinese address: build most useful readable name
+          // Priority: POI/business name > 商场/商圈 > road > district > city
+          let placeName='';
+
+          // Level 1: specific POI / business / mall / shop name
+          if(data.name&&data.name!==addr.road&&data.name!==addr.house_number){
+            placeName=data.name;
+          }
+
+          // Level 2: shopping mall / commercial district / landmark
+          const commercialAreas=[
+            addr.commercial,addr.retail,addr.industrial,
+            addr.marketplace,addr.shopping_mall,
+            addr.square,addr.plaza,addr.mall
+          ].filter(Boolean);
+          if(!placeName&&commercialAreas.length>0){
+            placeName=commercialAreas[0];
+          }
+
+          // Level 3: Build structured Chinese address (省→市→区→街道→门牌)
+          if(!placeName){
+            const structured=[];
+            // Province
+            if(addr.state)structured.push(addr.state);
+            // City
+            if(addr.city)structured.push(addr.city);
+            else if(addr.town)structured.push(addr.town);
+            // District/County
+            if(addr.county)structured.push(addr.county);
+            else if(addr.district)structured.push(addr.district);
+            // Suburb/Neighbourhood
+            if(addr.suburb)structured.push(addr.suburb);
+            else if(addr.neighbourhood)structured.push(addr.neighbourhood);
+            else if(addr.village)structured.push(addr.village);
+            // Road + house number
+            let roadPart='';
+            if(addr.road)roadPart=addr.road;
+            if(addr.house_number)roadPart+=addr.house_number+'号';
+            if(roadPart)structured.push(roadPart);
+
+            placeName=structured.join('，');
+          }
+
+          // Final fallback
+          if(!placeName||placeName.length<3){
+            placeName=displayName.split(',')[0]||displayName;
+          }
+
           resolve({
             lat:latitude,lng:longitude,
-            name:placeName||`${latitude.toFixed(5)},${longitude.toFixed(5)}`,
+            name:placeName.slice(0,80),
             full:displayName
           });
-          toast('已获取位置：'+placeName.slice(0,30),'ok');
+          toast('已获取：'+placeName.slice(0,24)+(placeName.length>24?'…':''),'ok');
         }catch{
           // Fallback: just use coordinates as string
           resolve({lat:latitude,lng:longitude,name:`${latitude.toFixed(5)},${longitude.toFixed(5)}`,full:''});
